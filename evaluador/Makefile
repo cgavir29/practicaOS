@@ -9,10 +9,10 @@ all: dirs $(BINDIR)/evaluador
 
 VPATH := src include build
 
-$(BINDIR)/evaluador: evaluador.o cast.o init.o reg.o ctrl.o rep.o
+$(BINDIR)/evaluador: evaluador.o cast.o init.o reg.o ctrl.o rep.o stop.o
 	$(CXX) -o $@ $(LDFLAGS) $^
 
-$(BUILDDIR)/evaluador.o: evaluador.cpp cast.h init.h reg.h ctrl.h rep.h
+$(BUILDDIR)/evaluador.o: evaluador.cpp cast.h init.h reg.h ctrl.h rep.h stop.h
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 $(BUILDDIR)/cast.o: cast.cpp cast.h
@@ -29,6 +29,10 @@ $(BUILDDIR)/ctrl.o: ctrl.cpp ctrl.h cast.h
 
 $(BUILDDIR)/rep.o: rep.cpp rep.h cast.h
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(BUILDDIR)/stop.o: stop.cpp stop.h
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
 
 clean:
 	rm -f $(SRCDIR)/*.cpp~ makefile~

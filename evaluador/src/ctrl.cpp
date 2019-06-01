@@ -1,4 +1,5 @@
 #include <iostream>
+#include "cast.h"
 #include "ctrl.h"
 
 using namespace std;

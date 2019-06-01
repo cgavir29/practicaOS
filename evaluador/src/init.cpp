@@ -71,13 +71,6 @@ void handle_init_opt_d(string val, bool given)
     // Do Stuff
 }
 
-void handle_init_opt_ee(string val, bool given)
-{
-    // No esta en la presentacion
-
-    // Do Stuff
-}
-
 void handle_init_opt_s(string val, bool given)
 {
     int skin_lvl = 100;
@@ -180,13 +173,6 @@ void handle_init(int start, int end, char *argv[])
         {
             d = true;
             handle_init_opt_d(val, d);
-            k++;
-            continue;
-        }
-        else if (option == "-ee")
-        {
-            ee = true;
-            handle_init_opt_ee(val, ee);
             k++;
             continue;
         }

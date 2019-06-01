@@ -5,6 +5,7 @@
 #include "reg.h"
 #include "ctrl.h"
 #include "rep.h"
+#include "stop.h"
 // #include <cerrno>
 // #include <fstream>
 // #include <sstream>
@@ -42,6 +43,10 @@ int main(int argc, char *argv[])
         else if (command == "rep")
         {
             handle_rep(start, end, argv);
+        } 
+        else if (command == "stop")
+        {
+            handle_stop(start, end, argv);
         }
         else
         {

@@ -16,8 +16,6 @@ void handle_init_opt_b(string val, bool given);
 
 void handle_init_opt_d(string val, bool given);
 
-void handle_init_opt_ee(string val, bool given);
-
 void handle_init_opt_s(string val, bool given);
 
 void handle_init_opt_q(string val, bool given);
