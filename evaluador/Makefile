@@ -9,25 +9,28 @@ all: dirs $(BINDIR)/evaluador
 
 VPATH := src include build
 
-$(BINDIR)/evaluador: evaluador.o cast.o init.o reg.o ctrl.o rep.o stop.o
+$(BINDIR)/evaluador: evaluador.o errs.o cast.o init.o reg.o ctrl.o rep.o stop.o
 	$(CXX) -o $@ $(LDFLAGS) $^
 
-$(BUILDDIR)/evaluador.o: evaluador.cpp cast.h init.h reg.h ctrl.h rep.h stop.h
+$(BUILDDIR)/evaluador.o: evaluador.cpp errs.h cast.h init.h reg.h ctrl.h rep.h stop.h
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
-$(BUILDDIR)/cast.o: cast.cpp cast.h
+$(BUILDDIR)/errs.o: errs.cpp errs.h
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
-$(BUILDDIR)/init.o: init.cpp init.h cast.h
+$(BUILDDIR)/cast.o: cast.cpp cast.h errs.h
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
-$(BUILDDIR)/reg.o: reg.cpp reg.h cast.h
+$(BUILDDIR)/init.o: init.cpp init.h errs.h cast.h 
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
-$(BUILDDIR)/ctrl.o: ctrl.cpp ctrl.h cast.h
+$(BUILDDIR)/reg.o: reg.cpp reg.h errs.h cast.h 
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
-$(BUILDDIR)/rep.o: rep.cpp rep.h cast.h
+$(BUILDDIR)/ctrl.o: ctrl.cpp ctrl.h errs.h cast.h 
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(BUILDDIR)/rep.o: rep.cpp rep.h errs.h cast.h 
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
 $(BUILDDIR)/stop.o: stop.cpp stop.h

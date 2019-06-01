@@ -1,3 +1,4 @@
+#include "errs.h"
 #include "stop.h"
 
 using namespace std;

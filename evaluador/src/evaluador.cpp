@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include "errs.h"
 #include "cast.h"
 #include "init.h"
 #include "reg.h"
@@ -18,8 +19,7 @@ int main(int argc, char *argv[])
 {
     if (argc < 2)
     {
-        cout << "Not enough arguments were given" << endl;
-        exit(0);
+        not_enough_args();
     }
     else
     {
@@ -50,8 +50,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            cout << "Command '" + command + "' not supported" << endl;
-            exit(0);
+            command_not_supported(command);
         }
     }
     return 0;

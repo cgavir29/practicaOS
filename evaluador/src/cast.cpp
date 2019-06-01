@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include "errs.h"
 #include "cast.h"
 
 using namespace std;
@@ -12,8 +13,7 @@ int string_cast(string val)
     }
     catch (...)
     {
-        cout << "Invalid value, '" << val << "' must be a number" << endl;
-        exit(0);
+        string_not_num(val);
     }
 }
 
@@ -23,16 +23,14 @@ int string_cast_pos(string val) {
     {
         int num = stoi(val);
         if (num < 0) {
-            cout << "Number must be positive" << endl;
-            exit(0);
+            num_not_positive(num);
         } else {
             return num;
         }
     }
     catch (...)
     {
-        cout << "Invalid value, '" << val << "' must be a number" << endl;
-        exit(0);
+        string_not_num(val);
     }
 }
 }

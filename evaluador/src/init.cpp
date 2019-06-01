@@ -1,7 +1,8 @@
 #include <string>
 #include <iostream>
-#include "init.h"
+#include "errs.h"
 #include "cast.h"
+#include "init.h"
 
 using namespace std;
 
@@ -109,6 +110,7 @@ void handle_init(int start, int end, char *argv[])
         {
             if (i)
             {
+                // Deberia parar o no? preguntar a mc
                 cout << "Option has already been set, first given value will be used" << endl;
                 // exit() if desired
             }
@@ -192,8 +194,7 @@ void handle_init(int start, int end, char *argv[])
         }
         else
         {
-            cout << "Option '" << option << "' not supported" << endl;
-            exit(0);
+            option_not_supported(option);
         }
     }
 }

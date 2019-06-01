@@ -1,3 +1,4 @@
+#include "errs.h"
 #include "cast.h"
 #include "rep.h"
 
