@@ -1,3 +1,4 @@
+#include <iostream>
 #include "ctrl.h"
 
 using namespace std;
@@ -8,12 +9,19 @@ void handle_ctrl_opt_s(string shared_mem) {
 
     // Modo Interactivo
     string sub_command;
-    cin << "Enter a sub-command" << endl;
+    cout << "Enter a sub-command" << endl;
+    getline(cin, sub_command);
+    // cin >> sub_command;
+    cout << sub_command << endl;
+
+    // Hacer split para saber si es list o update
+    // con base en ello mandar los argumentos
+    // al respectivo commando
     
 }
 
 void handle_ctrl(int start, int end, char *argv[]) {
-    for (int i = start; i < end - 1, i++) {
+    for (int i = start; i < end - 1; i++) {
         string option = argv[i];
         string shared_mem = argv[i + 1];
 
@@ -21,7 +29,7 @@ void handle_ctrl(int start, int end, char *argv[]) {
             handle_ctrl_opt_s(shared_mem);
         } else {
             cout << "Option '" << option << "' not supported" << endl;
-            exit(0); 
+            exit(0);
         }
     } 
 }

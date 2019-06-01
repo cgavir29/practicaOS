@@ -10,7 +10,7 @@ void handle_init_opt_i(string val, bool given)
     int num_entries = 5;
     if (given)
     {
-        num_entries = string_cast(val);
+        num_entries = string_cast_pos(val);
     }
 
     // Do Stuff
@@ -21,7 +21,7 @@ void handle_init_opt_ie(string val, bool given)
     int ent_queue_len = 6;
     if (given)
     {
-        ent_queue_len = string_cast(val);
+        ent_queue_len = string_cast_pos(val);
     }
 
     // Do Stuff
@@ -32,7 +32,7 @@ void handle_init_opt_oe(string val, bool given)
     int out_queue_len = 10;
     if (given)
     {
-        out_queue_len = string_cast(val);
+        out_queue_len = string_cast_pos(val);
     }
 
     // Do Stuff
@@ -54,7 +54,7 @@ void handle_init_opt_b(string val, bool given)
     int blood_lvl = 100;
     if (given)
     {
-        blood_lvl = string_cast(val); // 100 es el default max pero no puede pasarse?
+        blood_lvl = string_cast_pos(val); // 100 es el default max pero no puede pasarse?
     }
 
     // Do Stuff
@@ -65,7 +65,7 @@ void handle_init_opt_d(string val, bool given)
     int detritus_lvl = 100;
     if (given)
     {
-        detritus_lvl = string_cast(val); // 100 es el default max pero no puede pasarse?
+        detritus_lvl = string_cast_pos(val); // 100 es el default max pero no puede pasarse?
     }
 
     // Do Stuff
@@ -83,7 +83,7 @@ void handle_init_opt_s(string val, bool given)
     int skin_lvl = 100;
     if (given)
     {
-        skin_lvl = string_cast(val);
+        skin_lvl = string_cast_pos(val);
     }
 
     // Do stuff
@@ -94,7 +94,7 @@ void handle_init_opt_q(string val, bool given)
     int int_queue_len = 6;
     if (given)
     {
-        int_queue_len = string_cast(val);
+        int_queue_len = string_cast_pos(val);
     }
 
     // Do stuff

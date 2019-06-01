@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void handle_ctrl();
+void handle_ctrl(int start, int end, char *argv[]);
 
 void handle_ctrl_opt_s(string shared_mem);
 

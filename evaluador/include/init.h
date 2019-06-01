@@ -2,6 +2,8 @@
 
 using namespace std;
 
+void handle_init(int start, int end, char *argv[]);
+
 void hande_init_opt_i(string val, bool given);
 
 void handle_init_opt_ie(string val, bool given);
@@ -19,6 +21,3 @@ void handle_init_opt_ee(string val, bool given);
 void handle_init_opt_s(string val, bool given);
 
 void handle_init_opt_q(string val, bool given);
-
-void handle_init(int start, int end, char *argv[]);
-
