@@ -1,18 +1,27 @@
 SRCDIR := src
 BUILDDIR := build
+INCLUDE  := include
 BINDIR := bin
 LDFLAGS  := -pthread
 CXXFLAGS := -pedantic-errors -Wall -Wextra -std=c++11 -I include
 
-all: dirs $(BINDIR)/evaluador 
+all: dirs $(BINDIR)/evaluador
 
-VPATH := src build
+VPATH := src include build
 
-$(BINDIR)/evaluador: evaluador.o
+$(BINDIR)/evaluador: evaluador.o cast.o init.o
 	$(CXX) -o $@ $(LDFLAGS) $^
 
-$(BUILDDIR)/evaluador.o: evaluador.cpp
+$(BUILDDIR)/evaluador.o: evaluador.cpp cast.h init.h
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(BUILDDIR)/cast.o: cast.cpp cast.h
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(BUILDDIR)/init.o: init.cpp init.h cast.h
+	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+
 
 clean:
 	rm -f $(SRCDIR)/*.cpp~ makefile~
