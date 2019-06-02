@@ -53,6 +53,8 @@ void handle_ctrl(int start, int end, char *argv[]) {
 
         if (option == "-n") {
             handle_ctrl_opt_n(shared_mem);
+            i++;
+            continue;
         } else {
             option_not_supported(option);
         }

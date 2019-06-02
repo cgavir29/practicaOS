@@ -19,6 +19,13 @@ void option_not_supported(string option) {
     exit(0);
 }
 
+void check_value(string option, string val) {
+    if (val.empty()) {
+        cout << "No value given for option '" << option << "'" << endl;
+        exit(0);
+    }
+}
+
 void string_not_num(string val) {
     cout << "Invalid value, '" << val << "' must be a number" << endl;
     exit(0);
@@ -28,3 +35,4 @@ void num_not_positive(int num) {
     cout << "Invalid value, '" << num << "' must be postive" << endl;
     exit(0);
 }
+

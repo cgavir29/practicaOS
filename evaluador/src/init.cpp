@@ -41,10 +41,10 @@ void handle_init_opt_oe(string val, bool given)
 
 void handle_init_opt_n(string val, bool given)
 {
-    string mem_seg_name = "evaluator";
+    string shared_mem = "evaluator";
     if (given)
     {
-        mem_seg_name = val;
+        shared_mem = val;
     }
 
     // Do Stuff
@@ -101,10 +101,17 @@ void handle_init(int start, int end, char *argv[])
     bool i = false, ie = false, oe = false, n = false;
     bool b = false, d = false, ee = false, s = false, q = false;
 
-    for (int k = start; k < end - 1; k++)
+    // cout << "Start = " << start << endl;
+    // cout << "End = " << end << endl;
+    for (int k = start; k < end; k++)
     {
         string option = argv[k];
-        string val = argv[k + 1];
+        string val;
+        // cout << "Option = " << option << endl;
+        if (k + 1 < end) {
+            val = argv[k + 1];
+        }
+        // cout << "Value = " << val << endl;
 
         if (option == "-i")
         {
@@ -115,8 +122,9 @@ void handle_init(int start, int end, char *argv[])
                 // exit() if desired
             }
             else
-            {
+            {   
                 i = true;
+                check_value(option, val);
                 handle_init_opt_i(val, i);
             }
             k++; // Skip the next entire iteration (value)
@@ -131,6 +139,7 @@ void handle_init(int start, int end, char *argv[])
             else
             {
                 ie = true;
+                check_value(option, val);
                 handle_init_opt_ie(val, ie);
             }
             k++;
@@ -145,6 +154,7 @@ void handle_init(int start, int end, char *argv[])
             else
             {
                 oe = true;
+                check_value(option, val);
                 handle_init_opt_oe(val, oe);
             }
             k++;
@@ -153,6 +163,7 @@ void handle_init(int start, int end, char *argv[])
         else if (option == "-n")
         {
             n = true;
+            check_value(option, val);
             handle_init_opt_n(val, n);
             k++;
             continue;
@@ -166,6 +177,7 @@ void handle_init(int start, int end, char *argv[])
             else
             {
                 b = true;
+                check_value(option, val);
                 handle_init_opt_b(val, b);
             }
             k++;
@@ -174,6 +186,7 @@ void handle_init(int start, int end, char *argv[])
         else if (option == "-d")
         {
             d = true;
+            check_value(option, val);
             handle_init_opt_d(val, d);
             k++;
             continue;
@@ -181,6 +194,7 @@ void handle_init(int start, int end, char *argv[])
         else if (option == "-s")
         {
             s = true;
+            check_value(option, val);
             handle_init_opt_s(val, s);
             k++;
             continue;
@@ -188,6 +202,7 @@ void handle_init(int start, int end, char *argv[])
         else if (option == "-q")
         {
             q = true;
+            check_value(option, val);
             handle_init_opt_q(val, q);
             k++;
             continue;
