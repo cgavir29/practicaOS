@@ -15,9 +15,14 @@ void handle_rep(int start, int end, char *argv[]) {
     {
         string option = argv[i];
         string shared_mem = argv[i + 1];
-        
+
+        if (i + 1 < end) {
+            shared_mem = argv[i + 1];
+        }
+
         if (option == "-n")
         {
+            check_value(option, shared_mem);
             handle_rep_opt_n(shared_mem);
         } else
         {
