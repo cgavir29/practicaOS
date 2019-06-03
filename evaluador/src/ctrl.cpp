@@ -6,6 +6,35 @@
 using namespace std;
 
 
+void handle_ctrl_sub_update_opt_s() {
+
+}
+
+void handle_ctrl_sub_update_opt_d() {
+
+}
+
+void handle_ctrl_sub_update_opt_b() {
+
+}
+
+void handle_ctrl_sub_update(string option) {
+    // Hay que partir el option, primero es B | D | S y despues el numero
+    
+    if (option == "B")
+    {
+        handle_ctrl_sub_update_opt_b();
+    } else if (option == "D")
+    {
+        handle_ctrl_sub_update_opt_d();
+    } else if (option == "S")
+    {
+        handle_ctrl_sub_update_opt_s();
+    } else {
+        option_not_supported(option);
+    }
+}
+
 void handle_ctrl_sub_list_opt_all() {
 
 }
@@ -63,7 +92,8 @@ void handle_ctrl_opt_n(string shared_mem) {
         sub_command_info = input.substr(sub_command.length());
         // trim subcommand
         // sub_command_info.replace(sub_command_info.begin(), sub_command_info.end(), )
-        if (input.find(" ") != string::npos) {
+        if (input.find(" ") != string::npos) 
+        {
             // sub_command = input.substr(0, input.find(" "));
             sub_command_info = input.substr(sub_command.length() + 1);
         }
@@ -76,10 +106,13 @@ void handle_ctrl_opt_n(string shared_mem) {
         {
             check_value(sub_command, sub_command_info);
             handle_ctrl_sub_list(sub_command_info);
-        } else if (sub_command == "update")
+        } 
+        else if (sub_command == "update")
         {
-            // handle_ctrl_sub_update("...");
-        } else
+            check_value(sub_command, sub_command_info);
+            handle_ctrl_sub_update(sub_command_info);
+        } 
+        else
         {
             // Hacer un error interactivo que no salga del programa
             command_not_supported(sub_command);
@@ -87,10 +120,6 @@ void handle_ctrl_opt_n(string shared_mem) {
         
     }
 
-    // Hacer split para saber si es list o update
-    // con base en ello mandar los argumentos
-    // al respectivo commando
-    
 }
 
 
@@ -100,16 +129,21 @@ void handle_ctrl(int start, int end, char *argv[]) {
         string option = argv[i];
         string shared_mem;
 
-        if (i + 1 < end) {
+        if (i + 1 < end) 
+        {
             shared_mem = argv[i + 1];
         }
 
-        if (option == "-n") {
+        if (option == "-n") 
+        {
+            cout << "mmm" << endl;
             check_value(option, shared_mem);
             handle_ctrl_opt_n(shared_mem);
             i++;
             continue;
-        } else {
+        } 
+        else 
+        {
             option_not_supported(option);
         }
     } 

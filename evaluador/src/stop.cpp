@@ -12,15 +12,24 @@ void handle_stop_opt_n(string shared_mem) {
 }
 
 void handle_stop(int start, int end, char *argv[]) {
-    for (int i = start; i < end - 1; i++) {
+    for (int i = start; i < end; i++) {
         string option = argv[i];
-        string shared_mem = argv[i + 1];
+        string shared_mem;
 
-        if (option == "-n") {
+        if (i + 1 < end) 
+        {
+            shared_mem = argv[i + 1];
+        }
+
+        if (option == "-n") 
+        {
+            check_value(option, shared_mem);
             handle_stop_opt_n(shared_mem);
             i++;
             continue;
-        } else {
+        } 
+        else 
+        {
             option_not_supported(option);
         }
     }

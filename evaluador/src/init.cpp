@@ -103,6 +103,7 @@ void handle_init(int start, int end, char *argv[])
 
     // cout << "Start = " << start << endl;
     // cout << "End = " << end << endl;
+
     for (int k = start; k < end; k++)
     {
         string option = argv[k];
