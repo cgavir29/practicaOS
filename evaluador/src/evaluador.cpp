@@ -15,7 +15,7 @@ using namespace std;
 
 
 // -----------------------------------------------------------------
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     if (argc < 2)
     {
@@ -23,30 +23,28 @@ int main(int argc, char *argv[])
     }
     else
     {
-        int start = 2;
-        int end = argc;
-        string command = argv[1];
+        const string& command = argv[1];
         // cout << "Running '" + command + "' command" << endl;
 
         if (command == "init")
         {
-            handle_init(start, end, argv);
+            handle_init(2, argc, argv);
         }
         else if (command == "reg")
         {
-            handle_reg(start, end, argv);
+            handle_reg(argc, argv);
         }
         else if (command == "ctrl")
         {
-            handle_ctrl(start, end, argv);
+            handle_ctrl(argv);
         }
         else if (command == "rep")
         {
-            handle_rep(start, end, argv);
+            handle_rep(argv);
         } 
         else if (command == "stop")
         {
-            handle_stop(start, end, argv);
+            handle_stop(argv);
         }
         else
         {

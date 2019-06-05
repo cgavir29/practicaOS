@@ -9,24 +9,24 @@ void not_enough_args() {
     exit(0);
 }
 
-void command_not_supported(string command) {
+void command_not_supported(const string& command) {
     cout << "Command '" + command + "' not supported" << endl;
     exit(0);
 }
 
-void option_not_supported(string option) {
+void option_not_supported(const string& option) {
     cout << "Option '" << option << "' not supported" << endl;
     exit(0);
 }
 
-void check_value(string option, string val) {
+void check_value(const string& option, const string& val) {
     if (val.empty()) {
         cout << "No value given for option '" << option << "'" << endl;
         exit(0);
     }
 }
 
-void string_not_num(string val) {
+void string_not_num(const string& val) {
     cout << "Invalid value, '" << val << "' must be a number" << endl;
     exit(0);
 }

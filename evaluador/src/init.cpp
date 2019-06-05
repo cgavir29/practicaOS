@@ -6,7 +6,7 @@
 
 using namespace std;
 
-void handle_init_opt_i(string val, bool given)
+void handle_init_opt_i(const string& val, bool given)
 {
     int num_entries = 5;
     if (given)
@@ -17,7 +17,7 @@ void handle_init_opt_i(string val, bool given)
     // Do Stuff
 }
 
-void handle_init_opt_ie(string val, bool given)
+void handle_init_opt_ie(const string& val, bool given)
 {
     int ent_queue_len = 6;
     if (given)
@@ -28,7 +28,7 @@ void handle_init_opt_ie(string val, bool given)
     // Do Stuff
 }
 
-void handle_init_opt_oe(string val, bool given)
+void handle_init_opt_oe(const string& val, bool given)
 {
     int out_queue_len = 10;
     if (given)
@@ -39,7 +39,7 @@ void handle_init_opt_oe(string val, bool given)
     // Do Stuff
 }
 
-void handle_init_opt_n(string val, bool given)
+void handle_init_opt_n(const string& val, bool given)
 {
     string shared_mem = "evaluator";
     if (given)
@@ -50,7 +50,7 @@ void handle_init_opt_n(string val, bool given)
     // Do Stuff
 }
 
-void handle_init_opt_b(string val, bool given)
+void handle_init_opt_b(const string& val, bool given)
 {
     int blood_lvl = 100;
     if (given)
@@ -61,7 +61,7 @@ void handle_init_opt_b(string val, bool given)
     // Do Stuff
 }
 
-void handle_init_opt_d(string val, bool given)
+void handle_init_opt_d(const string& val, bool given)
 {
     int detritus_lvl = 100;
     if (given)
@@ -72,7 +72,7 @@ void handle_init_opt_d(string val, bool given)
     // Do Stuff
 }
 
-void handle_init_opt_s(string val, bool given)
+void handle_init_opt_s(const string& val, bool given)
 {
     int skin_lvl = 100;
     if (given)
@@ -83,7 +83,7 @@ void handle_init_opt_s(string val, bool given)
     // Do stuff
 }
 
-void handle_init_opt_q(string val, bool given)
+void handle_init_opt_q(const string& val, bool given)
 {
     int int_queue_len = 6;
     if (given)
@@ -97,18 +97,20 @@ void handle_init_opt_q(string val, bool given)
 // Consider using enum when done
 void handle_init(int start, int end, char *argv[])
 {
-    // Options for the init command, a default value must be set if none is given
-    bool i = false, ie = false, oe = false, n = false;
-    bool b = false, d = false, ee = false, s = false, q = false;
-
     // cout << "Start = " << start << endl;
     // cout << "End = " << end << endl;
 
+    // char* option;
+    // char* val;
+    string option;
+    string val;
+
+    bool i = false, ie = false, oe = false, n = false;
+    bool b = false, d = false, ee = false, s = false, q = false;
+
     for (int k = start; k < end; k++)
     {
-        string option = argv[k];
-        string val;
-        // cout << "Option = " << option << endl;
+        option = argv[k];
         if (k + 1 < end) {
             val = argv[k + 1];
         }
@@ -116,14 +118,8 @@ void handle_init(int start, int end, char *argv[])
 
         if (option == "-i")
         {
-            if (i)
+            if (!i)
             {
-                // Deberia parar o no? preguntar a mc
-                cout << "Option has already been set, first given value will be used" << endl;
-                // exit() if desired
-            }
-            else
-            {   
                 i = true;
                 check_value(option, val);
                 handle_init_opt_i(val, i);
@@ -133,11 +129,7 @@ void handle_init(int start, int end, char *argv[])
         }
         else if (option == "-ie")
         {
-            if (ie)
-            {
-                cout << "Option has already been set, first given value will be used" << endl;
-            }
-            else
+            if (!ie)
             {
                 ie = true;
                 check_value(option, val);
@@ -148,11 +140,7 @@ void handle_init(int start, int end, char *argv[])
         }
         else if (option == "-oe")
         {
-            if (oe)
-            {
-                cout << "Option has already been set, first given value will be used" << endl;
-            }
-            else
+            if (!oe)
             {
                 oe = true;
                 check_value(option, val);
@@ -163,19 +151,17 @@ void handle_init(int start, int end, char *argv[])
         }
         else if (option == "-n")
         {
-            n = true;
-            check_value(option, val);
-            handle_init_opt_n(val, n);
+            if (!n) {
+                n = true;
+                check_value(option, val);
+                handle_init_opt_n(val, n);
+            }
             k++;
             continue;
         }
         else if (option == "-b")
         {
-            if (b)
-            {
-                cout << "Option has already been set, first given value will be used" << endl;
-            }
-            else
+            if (!b)
             {
                 b = true;
                 check_value(option, val);
@@ -186,25 +172,31 @@ void handle_init(int start, int end, char *argv[])
         }
         else if (option == "-d")
         {
-            d = true;
-            check_value(option, val);
-            handle_init_opt_d(val, d);
+            if (!d) {
+                d = true;
+                check_value(option, val);
+                handle_init_opt_d(val, d);
+            }
             k++;
             continue;
         }
         else if (option == "-s")
         {
-            s = true;
-            check_value(option, val);
-            handle_init_opt_s(val, s);
+            if (!s) {
+                s = true;
+                check_value(option, val);
+                handle_init_opt_s(val, s);
+            }
             k++;
             continue;
         }
         else if (option == "-q")
         {
-            q = true;
-            check_value(option, val);
-            handle_init_opt_q(val, q);
+            if (!q) {
+                q = true;
+                check_value(option, val);
+                handle_init_opt_q(val, q);
+            }
             k++;
             continue;
         }
