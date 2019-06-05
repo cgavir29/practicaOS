@@ -18,11 +18,11 @@ void handle_ctrl_sub_list_opt_reac();
 
 void handle_ctrl_sub_list_opt_all();
 
-void handle_ctrl_sub_update(string option);
+void handle_ctrl_sub_update(string sub_command_info);
 
-void handle_ctrl_sub_update_opt_b();
+void handle_ctrl_sub_update_opt_b(string val);
 
-void handle_ctrl_sub_update_opt_d();
+void handle_ctrl_sub_update_opt_d(string val);
 
-void handle_ctrl_sub_update_opt_s();
+void handle_ctrl_sub_update_opt_s(string val);
 
