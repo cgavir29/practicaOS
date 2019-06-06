@@ -34,3 +34,6 @@
 # Own
 evaluador/bin/*
 .vscode
+# Por ahora
+*.txt
+*.spl
