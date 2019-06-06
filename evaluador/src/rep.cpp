@@ -51,14 +51,32 @@ using namespace std;
 
 
 void handle_rep(char* argv[]) {
-    char* option = argv[2];
+    string option = argv[2];
     // cout << option << endl;
-    char* option_value = argv[3];
+    string option_value = argv[3];
     // cout << option_value << endl;
-    char* extra_option = argv[4];
+    string extra_option = argv[4];
     // cout << extra_option << endl;
     int extra_option_value = string_cast_pos(argv[5]);
     // cout << extra_option_value << endl;
+
+    if (option != "-n") 
+    {
+        option_not_supported(option);
+    }
+
+    if (extra_option == "-i") 
+    {
+        // Encuentra examenes hasta i <integer> segundos?
+    } 
+    else if (extra_option == "-m")
+    {
+        // Encuentra m <integer> numero de examenes?
+    }
+    else 
+    {
+        option_not_supported(extra_option);
+    }
 
 
     int id = 5; // Identificador

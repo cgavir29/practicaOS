@@ -110,7 +110,8 @@ void handle_init(int start, int end, char *argv[], Header& headr)
     for (int k = start; k < end; k++)
     {
         option = argv[k];
-        if (k + 1 < end) {
+        if (k + 1 < end) 
+        {
             val = argv[k + 1];
         }
 

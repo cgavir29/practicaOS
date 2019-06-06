@@ -22,9 +22,12 @@ int string_cast_pos(const string& val)
     try
     {
         int num = stoi(val);
-        if (num < 0) {
+        if (num < 0) 
+        {
             num_not_positive(num);
-        } else {
+        } 
+        else 
+        {
             return num;
         }
     }

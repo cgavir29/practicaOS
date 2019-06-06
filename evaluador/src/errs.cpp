@@ -4,34 +4,41 @@
 
 using namespace std;
 
-void not_enough_args() {
+void not_enough_args() 
+{
     cout << "Not enough arguments were given" << endl;
     exit(0);
 }
 
-void command_not_supported(const string& command) {
+void command_not_supported(const string& command) 
+{
     cout << "Command '" + command + "' not supported" << endl;
     exit(0);
 }
 
-void option_not_supported(const string& option) {
+void option_not_supported(const string& option) 
+{
     cout << "Option '" << option << "' not supported" << endl;
     exit(0);
 }
 
-void check_value(const string& option, const string& val) {
-    if (val.empty()) {
+void check_value(const string& option, const string& val) 
+{
+    if (val.empty()) 
+    {
         cout << "No value given for option '" << option << "'" << endl;
         exit(0);
     }
 }
 
-void string_not_num(const string& val) {
+void string_not_num(const string& val) 
+{
     cout << "Invalid value, '" << val << "' must be a number" << endl;
     exit(0);
 }
 
-void num_not_positive(int num) {
+void num_not_positive(int num) 
+{
     cout << "Invalid value, '" << num << "' must be postive" << endl;
     exit(0);
 }
