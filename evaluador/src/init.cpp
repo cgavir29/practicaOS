@@ -6,7 +6,7 @@
 
 using namespace std;
 
-void handle_init_opt_i(const string& val, bool given)
+int handle_init_opt_i(const string& val, bool given)
 {
     int num_entries = 5;
     if (given)
@@ -14,10 +14,10 @@ void handle_init_opt_i(const string& val, bool given)
         num_entries = string_cast_pos(val);
     }
 
-    // Do Stuff
+    return num_entries;
 }
 
-void handle_init_opt_ie(const string& val, bool given)
+int handle_init_opt_ie(const string& val, bool given)
 {
     int ent_queue_len = 6;
     if (given)
@@ -25,10 +25,10 @@ void handle_init_opt_ie(const string& val, bool given)
         ent_queue_len = string_cast_pos(val);
     }
 
-    // Do Stuff
+    return ent_queue_len;
 }
 
-void handle_init_opt_oe(const string& val, bool given)
+int handle_init_opt_oe(const string& val, bool given)
 {
     int out_queue_len = 10;
     if (given)
@@ -36,10 +36,10 @@ void handle_init_opt_oe(const string& val, bool given)
         out_queue_len = string_cast_pos(val);
     }
 
-    // Do Stuff
+    return out_queue_len;
 }
 
-void handle_init_opt_n(const string& val, bool given)
+void handle_init_opt_n(const string& val, char* target, bool given)
 {
     string shared_mem = "evaluator";
     if (given)
@@ -47,10 +47,13 @@ void handle_init_opt_n(const string& val, bool given)
         shared_mem = val;
     }
 
-    // Do Stuff
+    for (u_long i = 0; i < val.length(); i++) {
+        target[i] = val[i];
+    }
+
 }
 
-void handle_init_opt_b(const string& val, bool given)
+int handle_init_opt_b(const string& val, bool given)
 {
     int blood_lvl = 100;
     if (given)
@@ -58,10 +61,11 @@ void handle_init_opt_b(const string& val, bool given)
         blood_lvl = string_cast_pos(val); // 100 es el default max pero no puede pasarse?
     }
 
-    // Do Stuff
+    return blood_lvl;
+
 }
 
-void handle_init_opt_d(const string& val, bool given)
+int handle_init_opt_d(const string& val, bool given)
 {
     int detritus_lvl = 100;
     if (given)
@@ -69,10 +73,10 @@ void handle_init_opt_d(const string& val, bool given)
         detritus_lvl = string_cast_pos(val); // 100 es el default max pero no puede pasarse?
     }
 
-    // Do Stuff
+    return detritus_lvl;
 }
 
-void handle_init_opt_s(const string& val, bool given)
+int handle_init_opt_s(const string& val, bool given)
 {
     int skin_lvl = 100;
     if (given)
@@ -80,10 +84,10 @@ void handle_init_opt_s(const string& val, bool given)
         skin_lvl = string_cast_pos(val);
     }
 
-    // Do stuff
+    return skin_lvl;
 }
 
-void handle_init_opt_q(const string& val, bool given)
+int handle_init_opt_q(const string& val, bool given)
 {
     int int_queue_len = 6;
     if (given)
@@ -91,22 +95,17 @@ void handle_init_opt_q(const string& val, bool given)
         int_queue_len = string_cast_pos(val);
     }
 
-    // Do stuff
+    return int_queue_len;
 }
 
-// Consider using enum when done
-void handle_init(int start, int end, char *argv[])
-{
-    // cout << "Start = " << start << endl;
-    // cout << "End = " << end << endl;
 
-    // char* option;
-    // char* val;
+void handle_init(int start, int end, char *argv[], Header& headr)
+{
     string option;
     string val;
 
     bool i = false, ie = false, oe = false, n = false;
-    bool b = false, d = false, ee = false, s = false, q = false;
+    bool b = false, d = false, s = false, q = false;
 
     for (int k = start; k < end; k++)
     {
@@ -114,7 +113,6 @@ void handle_init(int start, int end, char *argv[])
         if (k + 1 < end) {
             val = argv[k + 1];
         }
-        // cout << "Value = " << val << endl;
 
         if (option == "-i")
         {
@@ -122,7 +120,7 @@ void handle_init(int start, int end, char *argv[])
             {
                 i = true;
                 check_value(option, val);
-                handle_init_opt_i(val, i);
+                headr.i = handle_init_opt_i(val, i);
             }
             k++; // Skip the next entire iteration (value)
             continue;
@@ -133,7 +131,7 @@ void handle_init(int start, int end, char *argv[])
             {
                 ie = true;
                 check_value(option, val);
-                handle_init_opt_ie(val, ie);
+                headr.ie = handle_init_opt_ie(val, ie);
             }
             k++;
             continue;
@@ -144,7 +142,7 @@ void handle_init(int start, int end, char *argv[])
             {
                 oe = true;
                 check_value(option, val);
-                handle_init_opt_oe(val, oe);
+                headr.oe = handle_init_opt_oe(val, oe);
             }
             k++;
             continue;
@@ -154,7 +152,7 @@ void handle_init(int start, int end, char *argv[])
             if (!n) {
                 n = true;
                 check_value(option, val);
-                handle_init_opt_n(val, n);
+                handle_init_opt_n(val, headr.n, n);
             }
             k++;
             continue;
@@ -165,7 +163,7 @@ void handle_init(int start, int end, char *argv[])
             {
                 b = true;
                 check_value(option, val);
-                handle_init_opt_b(val, b);
+                headr.b = handle_init_opt_b(val, b);
             }
             k++;
             continue;
@@ -175,7 +173,7 @@ void handle_init(int start, int end, char *argv[])
             if (!d) {
                 d = true;
                 check_value(option, val);
-                handle_init_opt_d(val, d);
+                headr.d = handle_init_opt_d(val, d);
             }
             k++;
             continue;
@@ -185,7 +183,7 @@ void handle_init(int start, int end, char *argv[])
             if (!s) {
                 s = true;
                 check_value(option, val);
-                handle_init_opt_s(val, s);
+                headr.s = handle_init_opt_s(val, s);
             }
             k++;
             continue;
@@ -195,7 +193,7 @@ void handle_init(int start, int end, char *argv[])
             if (!q) {
                 q = true;
                 check_value(option, val);
-                handle_init_opt_q(val, q);
+                headr.q = handle_init_opt_q(val, q);
             }
             k++;
             continue;

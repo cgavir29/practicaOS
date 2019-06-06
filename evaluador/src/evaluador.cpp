@@ -7,9 +7,6 @@
 #include "ctrl.h"
 #include "rep.h"
 #include "stop.h"
-// #include <cerrno>
-// #include <fstream>
-// #include <sstream>
 
 using namespace std;
 
@@ -17,18 +14,21 @@ using namespace std;
 // -----------------------------------------------------------------
 int main(int argc, char* argv[])
 {
+    
+
     if (argc < 2)
     {
         not_enough_args();
     }
     else
     {
+        
+        Header headr;
         const string& command = argv[1];
-        // cout << "Running '" + command + "' command" << endl;
 
         if (command == "init")
         {
-            handle_init(2, argc, argv);
+            handle_init(2, argc, argv, headr);
         }
         else if (command == "reg")
         {
@@ -50,6 +50,10 @@ int main(int argc, char* argv[])
         {
             command_not_supported(command);
         }
+        
+        // cout << headr.i << headr.ie << headr.n << endl;
     }
+
+    
     return 0;
 }

@@ -6,19 +6,22 @@
 using namespace std;
 
 
-void handle_ctrl_sub_update_opt_s(const string& val) {
+void handle_ctrl_sub_update_opt_s(const string& val) 
+{
     int num = string_cast_pos(val);
     // cout << "Num = " << num << endl;
 
 }
 
-void handle_ctrl_sub_update_opt_d(const string& val) {
+void handle_ctrl_sub_update_opt_d(const string& val) 
+{
     int num = string_cast_pos(val);
     // cout << "Num = " << num << endl;
 
 }
 
-void handle_ctrl_sub_update_opt_b(const string& val) {
+void handle_ctrl_sub_update_opt_b(const string& val) 
+{
     int num = string_cast_pos(val);
     // cout << "Num = " << num << endl;
 
@@ -52,32 +55,66 @@ void handle_ctrl_sub_update(const string& sub_command_info)
     } 
     else 
     {
-        option_not_supported(option);
+        // option_not_supported(option);
     }
 }
 
-void handle_ctrl_sub_list_opt_all() {
 
-}
 
 void handle_ctrl_sub_list_opt_reac() {
+    // No esta en presentacion
+}
+
+void handle_ctrl_sub_list_opt_repo() 
+{
+    int id;
+    int i;
+    char* k;
+    char* r;
+
+    cout << "Reported:" << endl;
+    cout << "[" << id << " " << i << " " << k << " " << r << "]" << endl;
 
 }
 
-void handle_ctrl_sub_list_opt_repo() {
+void handle_ctrl_sub_list_opt_wait() 
+{
+    int id;
+    int i;
+    char* k;
+    int q;
+
+    cout << "Waiting:" << endl;
+    cout << "[" << id << " " << i << " " << k << " " << q << "]" << endl;
 
 }
 
-void handle_ctrl_sub_list_opt_wait() {
+void handle_ctrl_sub_list_opt_proc() 
+{
+    int id;
+    int i;
+    char* k;
+    int q;
+    int p;
+
+    cout << "Processing:" << endl;
+    cout << "[" << id << " " << i << " " << k << " " << q << " " << p << "]" << endl;
 
 }
 
-void handle_ctrl_sub_list_opt_proc() {
+void handle_ctrl_sub_list_opt_all() {
+    // No esta en la presentacion, supongo que todos...
+    handle_ctrl_sub_list_opt_proc();
+    handle_ctrl_sub_list_opt_wait();
+    handle_ctrl_sub_list_opt_repo();
+    handle_ctrl_sub_list_opt_reac();
 
 }
 
-void handle_ctrl_sub_list(const string& option) {
-    if (option == "processing") {
+void handle_ctrl_sub_list(const string& option) 
+{
+    if (option == "processing") 
+    {
         handle_ctrl_sub_list_opt_proc();
     } 
     else if (option == "waiting")
@@ -96,15 +133,17 @@ void handle_ctrl_sub_list(const string& option) {
     {
         handle_ctrl_sub_list_opt_all();
     } 
-    else {
+    else
+    {
         option_not_supported(option);
-    }    
+    }
 }
 
 
 
 
-void handle_ctrl(char* argv[]) {
+void handle_ctrl(char* argv[]) 
+{
     char* option = argv[2];
     char* option_value = argv[3];
 
@@ -115,7 +154,8 @@ void handle_ctrl(char* argv[]) {
     cout << "> ";
     getline(cin, input);
     
-    while (input != "EOF") {
+    while (!cin.eof()) 
+    {
         if (input.find(" ") != string::npos)
         {
             sub_command = input.substr(0, input.find(" "));
@@ -135,11 +175,9 @@ void handle_ctrl(char* argv[]) {
             // check_value(sub_command, sub_command_info);
             handle_ctrl_sub_update(sub_command_info);
         } 
-        else
-        {
-            sub_command.clear();
-            sub_command_info.clear();
-        }
+
+        sub_command.clear();
+        sub_command_info.clear();
 
         cout << "> ";
         getline(cin, input);

@@ -17,8 +17,8 @@ int string_cast(const string& val)
     }
 }
 
-int string_cast_pos(const string& val) {
-    {
+int string_cast_pos(const string& val) 
+{
     try
     {
         int num = stoi(val);
@@ -32,5 +32,4 @@ int string_cast_pos(const string& val) {
     {
         string_not_num(val);
     }
-}
 }

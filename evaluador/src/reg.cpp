@@ -43,10 +43,10 @@ using namespace std;
 // }
 
 // Mira si el fichero existe, sacado de https://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
-bool exists_test3 (const string& name) {
-  struct stat buffer;   
-  return (stat (name.c_str(), &buffer) == 0); 
-}
+// bool exists_test3 (const string& name) {
+//   struct stat buffer;   
+//   return (stat (name.c_str(), &buffer) == 0); 
+// }
 
 void handle_reg_files(int start, int end, char* argv[])
 {
@@ -63,9 +63,29 @@ void handle_reg(int size, char *argv[])
     char* option = argv[2];
     char* option_value = argv[3];
 
-    if (size == 4) {
+    if (size == 4) 
+    {
         // Modo Interactivo
-        cout << "Modo Interactivo" << endl;
+        string input;
+        int bandeja_i;
+        char tipo_muestra;
+        int cantidad;
+        
+        cout << "> ";
+        getline(cin, input);
+
+        while (!cin.eof())
+        {   
+            string aux = "";
+            bandeja_i = string_cast_pos(aux += input[0]);
+            aux.clear();
+            tipo_muestra = input[2];
+            cantidad = string_cast_pos(aux += input[4]);
+
+            cout << "> ";
+            getline(cin, input);
+        }
+        
     } 
     else
     {
