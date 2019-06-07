@@ -22,6 +22,10 @@ struct Examen {
 };
 
 struct BandejaEntrada {
+    int entra;
+    int sale;
+    int cantidad;
+//   int tamano;
     struct Examen buffer[LEN_BAN_ENTRA];
 };
 
@@ -33,7 +37,3 @@ struct Evaluador {
     struct Header hdr;
     struct BandejaEntradaEntry bee;
 };
-
-// struct BandejaSalidaExit {
-
-// };

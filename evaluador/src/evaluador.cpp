@@ -41,6 +41,8 @@ int main(int argc, char *argv[])
             struct Header auxHdr;
             handle_init(2, argc, argv, auxHdr);
 
+            // string pepito = string(auxHdr.n);
+            // cout << pepito << endl;
             int fd = shm_open(auxHdr.n, O_RDWR | O_CREAT | O_EXCL, 0660);
             if (ftruncate(fd, sizeof(struct Evaluador)) != 0)
             {
@@ -65,39 +67,25 @@ int main(int argc, char *argv[])
             pEval->hdr.s = auxHdr.s;
             pEval->hdr.q = auxHdr.q;
 
-            // cout << pEval->hdr.n << endl;
-            
-            // int fd = shm_open(headr.n, O_RDWR | O_CREAT | O_EXCL, 0660);
-            // if (ftruncate(fd, sizeof(struct Header)) != 0)
-            // {
-            //     cerr << "Error creando la memoria compartida: "
-            //          << strerror(errno) << endl;
-            //     exit(1);
-            // }
+            // i = # Bandejas de Entrada
+            string ban_pos;
+            string be_vacios;
+            string be_llenos;
+            string be_mutex;
 
-            // void *dir = mmap(NULL, sizeof(struct Header), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-            // struct Header *pHeader = (struct Header *)dir;
+            for (int k = 0; k < pEval->hdr.i; k++) {
+                string ban_pos = to_string(k);
+                be_vacios = "BEV" + ban_pos;
+                be_llenos = "BEL" + ban_pos;
+                be_mutex = "BEM" + ban_pos;
+                // cout << be_vacios << endl;
+                // cout << be_llenos << endl;
+                // cout << be_mutex << endl;
+                sem_open(be_vacios.c_str(), O_CREAT | O_EXCL, 0660, pEval->hdr.ie);
+                sem_open(be_llenos.c_str(), O_CREAT | O_EXCL, 0660, 0);
+                sem_open(be_mutex.c_str(), O_CREAT | O_EXCL, 0660, 1);
+            }
 
-            // pHeader->i = headr.i;
-            // pHeader->ie = headr.ie;
-            // pHeader->oe = headr.oe;
-            // for (int i = 0; i < 40; i++)
-            // {
-            //     pHeader->n[i] = headr.n[i];
-            // }
-            // pHeader->b = headr.b;
-            // pHeader->d = headr.d;
-            // pHeader->s = headr.s;
-            // pHeader->q = headr.q;
-
-            // cout << pHeader->i << endl;
-            // cout << pHeader->ie << endl;
-            // cout << pHeader->oe << endl;
-            // cout << pHeader->n << endl;
-            // cout << pHeader->b << endl;
-            // cout << pHeader->d << endl;
-            // cout << pHeader->s << endl;
-            // cout << pHeader->q << endl;
         }
         else if (command == "reg")
         {
