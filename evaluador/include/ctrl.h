@@ -1,10 +1,9 @@
+#pragma once
+
 #include <string>
 
 using namespace std;
 
-// void handle_ctrl(int start, int end, char *argv[]);
-
-// void handle_ctrl_opt_n(string shared_mem);
 void handle_ctrl(char* argv[]);
 
 void handle_ctrl_sub_list(const string& option);

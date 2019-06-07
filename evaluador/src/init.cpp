@@ -112,8 +112,8 @@ void handle_init(int start, int end, char *argv[], Header &headr)
 
     if (!n)
     {
-        string def_name = "evaluador";
-        for (u_long i = 0; i < def_name.length(); i++)
+        string val = "evaluador";
+        for (u_long i = 0; i < val.length(); i++)
         {
             headr.n[i] = val[i];
         }
