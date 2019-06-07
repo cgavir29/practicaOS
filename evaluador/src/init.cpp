@@ -6,7 +6,7 @@
 
 using namespace std;
 
-void handle_init(int start, int end, char *argv[], Header &headr)
+void handle_init(int start, int end, char *argv[], Header &auxHdr)
 {
     string option;
     string val;
@@ -25,7 +25,7 @@ void handle_init(int start, int end, char *argv[], Header &headr)
         if (option == "-i")
         {
             check_value(option, val);
-            headr.i = string_cast_pos(val);
+            auxHdr.i = string_cast_pos(val);
             i = true;
             k++;
             continue;
@@ -33,7 +33,7 @@ void handle_init(int start, int end, char *argv[], Header &headr)
         else if (option == "-ie")
         {
             check_value(option, val);
-            headr.ie = string_cast_pos(val);
+            auxHdr.ie = string_cast_pos(val);
             ie = true;
             k++;
             continue;
@@ -41,7 +41,7 @@ void handle_init(int start, int end, char *argv[], Header &headr)
         else if (option == "-oe")
         {
             check_value(option, val);
-            headr.oe = string_cast_pos(val);
+            auxHdr.oe = string_cast_pos(val);
             i = true;
             k++;
             continue;
@@ -50,7 +50,7 @@ void handle_init(int start, int end, char *argv[], Header &headr)
         {
             for (u_long i = 0; i < val.length(); i++)
             {
-                headr.n[i] = val[i];
+                auxHdr.n[i] = val[i];
             }
             n = true;
             k++;
@@ -59,7 +59,7 @@ void handle_init(int start, int end, char *argv[], Header &headr)
         else if (option == "-b")
         {
             check_value(option, val);
-            headr.b = string_cast_pos(val);
+            auxHdr.b = string_cast_pos(val);
             b = true;
             k++;
             continue;
@@ -67,7 +67,7 @@ void handle_init(int start, int end, char *argv[], Header &headr)
         else if (option == "-d")
         {
             check_value(option, val);
-            headr.d = string_cast_pos(val);
+            auxHdr.d = string_cast_pos(val);
             d = true;
             k++;
             continue;
@@ -75,7 +75,7 @@ void handle_init(int start, int end, char *argv[], Header &headr)
         else if (option == "-s")
         {
             check_value(option, val);
-            headr.s = string_cast_pos(val);
+            auxHdr.s = string_cast_pos(val);
             s = true;
             k++;
             continue;
@@ -83,7 +83,7 @@ void handle_init(int start, int end, char *argv[], Header &headr)
         else if (option == "-q")
         {
             check_value(option, val);
-            headr.q = string_cast_pos(val);
+            auxHdr.q = string_cast_pos(val);
             q = true;
             k++;
             continue;
@@ -97,17 +97,17 @@ void handle_init(int start, int end, char *argv[], Header &headr)
     // Defaults, no seria mejor ponerlos en el struct?
     if (!i)
     {
-        headr.i = 5;
+        auxHdr.i = 5;
     }
 
     if (!ie)
     {
-        headr.ie = 6;
+        auxHdr.ie = 6;
     }
 
     if (!oe)
     {
-        headr.oe = 10;
+        auxHdr.oe = 10;
     }
 
     if (!n)
@@ -115,27 +115,27 @@ void handle_init(int start, int end, char *argv[], Header &headr)
         string val = "evaluador";
         for (u_long i = 0; i < val.length(); i++)
         {
-            headr.n[i] = val[i];
+            auxHdr.n[i] = val[i];
         }
     }
 
     if (!b)
     {
-        headr.b = 100;
+        auxHdr.b = 100;
     }
 
     if (!d)
     {
-        headr.d = 100;
+        auxHdr.d = 100;
     }
 
     if (!s)
     {
-        headr.s = 100;
+        auxHdr.s = 100;
     }
 
     if (!q)
     {
-        headr.q = 6;
+        auxHdr.q = 6;
     }
 }
