@@ -54,7 +54,19 @@ int main(int argc, char *argv[])
             struct Evaluador *pEval = (struct Evaluador *) dir;
 
             pEval->hdr.i = auxHdr.i;
-            cout << pEval->hdr.i << endl;
+            pEval->hdr.ie = auxHdr.ie;
+            pEval->hdr.oe = auxHdr.oe;
+            for (int i = 0; i < 40; i++)
+            {
+                pEval->hdr.n[i] = auxHdr.n[i];
+            }
+            pEval->hdr.b = auxHdr.b;
+            pEval->hdr.d = auxHdr.d;
+            pEval->hdr.s = auxHdr.s;
+            pEval->hdr.q = auxHdr.q;
+
+            // cout << pEval->hdr.n << endl;
+            
             // int fd = shm_open(headr.n, O_RDWR | O_CREAT | O_EXCL, 0660);
             // if (ftruncate(fd, sizeof(struct Header)) != 0)
             // {
