@@ -2,7 +2,7 @@ SRCDIR := src
 BUILDDIR := build
 INCLUDE  := include
 BINDIR := bin
-LDFLAGS  := -pthread
+LDFLAGS  := -lrt -pthread
 CXXFLAGS := -pedantic-errors -Wall -Wextra -std=c++11 -I include
 
 all: dirs $(BINDIR)/evaluador
@@ -10,7 +10,7 @@ all: dirs $(BINDIR)/evaluador
 VPATH := src include build
 
 $(BINDIR)/evaluador: evaluador.o errs.o cast.o init.o reg.o ctrl.o rep.o stop.o
-	$(CXX) -o $@ $(LDFLAGS) $^
+	$(CXX) -o $@ $^ $(LDFLAGS)
 
 $(BUILDDIR)/evaluador.o: evaluador.cpp errs.h cast.h init.h reg.h ctrl.h rep.h stop.h
 	$(CXX) $(CXXFLAGS) -o $@ -c $<

@@ -6,100 +6,7 @@
 
 using namespace std;
 
-int handle_init_opt_i(const string& val, bool given)
-{
-    int num_entries = 5;
-    if (given)
-    {
-        num_entries = string_cast_pos(val);
-    }
-
-    return num_entries;
-}
-
-int handle_init_opt_ie(const string& val, bool given)
-{
-    int ent_queue_len = 6;
-    if (given)
-    {
-        ent_queue_len = string_cast_pos(val);
-    }
-
-    return ent_queue_len;
-}
-
-int handle_init_opt_oe(const string& val, bool given)
-{
-    int out_queue_len = 10;
-    if (given)
-    {
-        out_queue_len = string_cast_pos(val);
-    }
-
-    return out_queue_len;
-}
-
-void handle_init_opt_n(const string& val, char* target, bool given)
-{
-    string shared_mem = "evaluator";
-    if (given)
-    {
-        shared_mem = val;
-    }
-
-    for (u_long i = 0; i < val.length(); i++) {
-        target[i] = val[i];
-    }
-
-}
-
-int handle_init_opt_b(const string& val, bool given)
-{
-    int blood_lvl = 100;
-    if (given)
-    {
-        blood_lvl = string_cast_pos(val); // 100 es el default max pero no puede pasarse?
-    }
-
-    return blood_lvl;
-
-}
-
-int handle_init_opt_d(const string& val, bool given)
-{
-    int detritus_lvl = 100;
-    if (given)
-    {
-        detritus_lvl = string_cast_pos(val); // 100 es el default max pero no puede pasarse?
-    }
-
-    return detritus_lvl;
-}
-
-int handle_init_opt_s(const string& val, bool given)
-{
-    int skin_lvl = 100;
-    if (given)
-    {
-        skin_lvl = string_cast_pos(val);
-    }
-
-    return skin_lvl;
-}
-
-int handle_init_opt_q(const string& val, bool given)
-{
-    int int_queue_len = 6;
-    if (given)
-    {
-        int_queue_len = string_cast_pos(val);
-    }
-
-    return int_queue_len;
-}
-
-
-void handle_init(int start, int end, char *argv[], Header& headr)
+void handle_init(int start, int end, char *argv[], Header &headr)
 {
     string option;
     string val;
@@ -110,92 +17,74 @@ void handle_init(int start, int end, char *argv[], Header& headr)
     for (int k = start; k < end; k++)
     {
         option = argv[k];
-        if (k + 1 < end) 
+        if (k + 1 < end)
         {
             val = argv[k + 1];
         }
 
         if (option == "-i")
         {
-            if (!i)
-            {
-                i = true;
-                check_value(option, val);
-                headr.i = handle_init_opt_i(val, i);
-            }
-            k++; // Skip the next entire iteration (value)
+            check_value(option, val);
+            headr.i = string_cast_pos(val);
+            i = true;
+            k++;
             continue;
         }
         else if (option == "-ie")
         {
-            if (!ie)
-            {
-                ie = true;
-                check_value(option, val);
-                headr.ie = handle_init_opt_ie(val, ie);
-            }
+            check_value(option, val);
+            headr.ie = string_cast_pos(val);
+            ie = true;
             k++;
             continue;
         }
         else if (option == "-oe")
         {
-            if (!oe)
-            {
-                oe = true;
-                check_value(option, val);
-                headr.oe = handle_init_opt_oe(val, oe);
-            }
+            check_value(option, val);
+            headr.oe = string_cast_pos(val);
+            i = true;
             k++;
             continue;
         }
         else if (option == "-n")
         {
-            if (!n) {
-                n = true;
-                check_value(option, val);
-                handle_init_opt_n(val, headr.n, n);
+            for (u_long i = 0; i < val.length(); i++)
+            {
+                headr.n[i] = val[i];
             }
+            n = true;
             k++;
             continue;
         }
         else if (option == "-b")
         {
-            if (!b)
-            {
-                b = true;
-                check_value(option, val);
-                headr.b = handle_init_opt_b(val, b);
-            }
+            check_value(option, val);
+            headr.b = string_cast_pos(val);
+            b = true;
             k++;
             continue;
         }
         else if (option == "-d")
         {
-            if (!d) {
-                d = true;
-                check_value(option, val);
-                headr.d = handle_init_opt_d(val, d);
-            }
+            check_value(option, val);
+            headr.d = string_cast_pos(val);
+            d = true;
             k++;
             continue;
         }
         else if (option == "-s")
         {
-            if (!s) {
-                s = true;
-                check_value(option, val);
-                headr.s = handle_init_opt_s(val, s);
-            }
+            check_value(option, val);
+            headr.s = string_cast_pos(val);
+            s = true;
             k++;
             continue;
         }
         else if (option == "-q")
         {
-            if (!q) {
-                q = true;
-                check_value(option, val);
-                headr.q = handle_init_opt_q(val, q);
-            }
+            check_value(option, val);
+            headr.q = string_cast_pos(val);
+            q = true;
             k++;
             continue;
         }
@@ -203,5 +92,50 @@ void handle_init(int start, int end, char *argv[], Header& headr)
         {
             option_not_supported(option);
         }
+    }
+
+    // Defaults, no seria mejor ponerlos en el struct?
+    if (!i)
+    {
+        headr.i = 5;
+    }
+
+    if (!ie)
+    {
+        headr.ie = 6;
+    }
+
+    if (!oe)
+    {
+        headr.oe = 10;
+    }
+
+    if (!n)
+    {
+        string def_name = "evaluador";
+        for (u_long i = 0; i < def_name.length(); i++)
+        {
+            headr.n[i] = val[i];
+        }
+    }
+
+    if (!b)
+    {
+        headr.b = 100;
+    }
+
+    if (!d)
+    {
+        headr.d = 100;
+    }
+
+    if (!s)
+    {
+        headr.s = 100;
+    }
+
+    if (!q)
+    {
+        headr.q = 6;
     }
 }

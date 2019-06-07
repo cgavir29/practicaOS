@@ -38,13 +38,37 @@ int main(int argc, char* argv[])
         {
             handle_init(2, argc, argv, headr);
 
-            int fd = shm_open(headr.n , O_RDWR | O_CREAT | O_EXCL, 0660);
-            // if (ftruncate(fd, sizeof(struct Buffer)) != 0) {
+            // no funciona con headr.n
+            // int fd = shm_open("evaluador", O_RDWR | O_CREAT | O_EXCL, 0660);
+            // if (ftruncate(fd, sizeof(struct Header)) != 0) {
             //     cerr << "Error creando la memoria compartida: "
 	        //         << errno << strerror(errno) << endl;
             //     exit(1);
             // }
-            void *dir = mmap(NULL, sizeof(struct Header), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+
+            // void *dir = mmap(NULL, sizeof(struct Header), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+            // Header *pHeader = (struct Header *) dir;
+
+            // cout << headr.i << endl;
+            // pHeader->i = headr.i;
+            // pHeader->ie = headr.ie;
+            // pHeader->oe = headr.oe;
+            // // pHeader->n = headr.n;
+            // pHeader->b = headr.b;
+            // pHeader->d = headr.d;
+            // pHeader->s = headr.s;
+            // pHeader->q = headr.q;
+
+            // cout << pHeader->i << endl;
+            // cout << pHeader->ie << endl;
+            // cout << pHeader->oe << endl;
+            // cout << pHeader->n << endl;
+            // cout << pHeader->b << endl;
+            // cout << pHeader->d << endl;
+            // cout << pHeader->s << endl;
+            // cout << pHeader->q << endl;
+
+
 
         }
         else if (command == "reg")
