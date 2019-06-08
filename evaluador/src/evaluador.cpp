@@ -37,9 +37,12 @@ int main(int argc, char *argv[])
         {
             pEval = handle_init(2, argc, argv);
 
-            // for (;;) {
+            int fd = shm_open("evaluador", O_RDWR, 0660);
+            while (fd != -1) {
+                fd = shm_open("evaluador", O_RDWR, 0660);
+            }
 
-            // }
+            exit(0);
         }
         else if (command == "reg")
         {
