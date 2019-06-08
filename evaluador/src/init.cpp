@@ -29,6 +29,36 @@ void initialize_evaluador(Evaluador *pEval, Header &auxHdr)
     pEval->hdr.q = auxHdr.q;
 }
 
+void initialize_buffers(Evaluador *pEval)
+{
+    // Buffers de Bandejas de Entrada
+    for (int k = 0; k < pEval->hdr.i; k++)
+    {
+        pEval->ban_en.bandejas[k].entra = 0;
+        pEval->ban_en.bandejas[k].sale = 0;
+        pEval->ban_en.bandejas[k].cantidad = 0;
+    }
+
+    // Buffers de Bandejs Internas
+    // 'B' = 0
+    pEval->ban_in.bandejas[0].entra = 0;
+    pEval->ban_in.bandejas[0].sale = 0;
+    pEval->ban_in.bandejas[0].cantidad = 0;
+    // 'D' = 1
+    pEval->ban_in.bandejas[1].entra = 0;
+    pEval->ban_in.bandejas[1].sale = 0;
+    pEval->ban_in.bandejas[1].cantidad = 0;
+    // 'S' = 2
+    pEval->ban_in.bandejas[2].entra = 0;
+    pEval->ban_in.bandejas[2].sale = 0;
+    pEval->ban_in.bandejas[2].cantidad = 0;
+
+    // Buffer de Bandeja de Salida
+    pEval->ban_out.entra = 0;
+    pEval->ban_out.sale = 0;
+    pEval->ban_out.cantidad = 0;
+}
+
 void create_semaphores(Evaluador *pEval)
 {
     // Semaforos Bandejas Entrada
@@ -39,10 +69,6 @@ void create_semaphores(Evaluador *pEval)
 
     for (int k = 0; k < pEval->hdr.i; k++)
     {
-        pEval->ban_en.bandejas[k].entra = 0;
-        pEval->ban_en.bandejas[k].sale = 0;
-        pEval->ban_en.bandejas[k].cantidad = 0;
-
         ban_pos = to_string(k);
         be_vacios = "BEV" + ban_pos;
         be_llenos = "BEL" + ban_pos;
@@ -53,36 +79,21 @@ void create_semaphores(Evaluador *pEval)
         sem_open(be_mutex.c_str(), O_CREAT | O_EXCL, 0660, 1);
     }
 
-    // Semaforos Bandejas Internas, 'B' = 0, 'D' = 1, 'S' = 2
+    // Semaforos Bandejas Internas
     // Semaforos Reactivo B
-    pEval->ban_in.bandejas[0].entra = 0;
-    pEval->ban_in.bandejas[0].sale = 0;
-    pEval->ban_in.bandejas[0].cantidad = 0;
     sem_open("BIVB", O_CREAT | O_EXCL, 0660, pEval->hdr.q);
     sem_open("BILB", O_CREAT | O_EXCL, 0660, 0);
     sem_open("BIMB", O_CREAT | O_EXCL, 0660, 1);
-
     // Semaforos Reactivo D
-    pEval->ban_in.bandejas[1].entra = 0;
-    pEval->ban_in.bandejas[1].sale = 0;
-    pEval->ban_in.bandejas[1].cantidad = 0;
     sem_open("BIVD", O_CREAT | O_EXCL, 0660, pEval->hdr.q);
     sem_open("BILD", O_CREAT | O_EXCL, 0660, 0);
     sem_open("BIMD", O_CREAT | O_EXCL, 0660, 1);
-
     // Semaforos Reactivo S
-    pEval->ban_in.bandejas[2].entra = 0;
-    pEval->ban_in.bandejas[2].sale = 0;
-    pEval->ban_in.bandejas[2].cantidad = 0;
     sem_open("BIVS", O_CREAT | O_EXCL, 0660, pEval->hdr.q);
     sem_open("BILS", O_CREAT | O_EXCL, 0660, 0);
     sem_open("BIMS", O_CREAT | O_EXCL, 0660, 1);
 
-
     // Semaforo Bandeja Salida
-    pEval->ban_out.entra = 0;
-    pEval->ban_out.sale = 0;
-    pEval->ban_out.cantidad = 0;
     sem_open("BSV", O_CREAT | O_EXCL, 0660, pEval->hdr.oe);
     sem_open("BSL", O_CREAT | O_EXCL, 0660, 0);
     sem_open("BSM", O_CREAT | O_EXCL, 0660, 1);
@@ -90,7 +101,7 @@ void create_semaphores(Evaluador *pEval)
 
 Evaluador *create_shared_mem(Header &auxHdr)
 {
-    int fd = shm_open("evaluador", O_RDWR | O_CREAT | O_EXCL, 0660);
+    int fd = shm_open(auxHdr.n, O_RDWR | O_CREAT | O_EXCL, 0660);
     if (ftruncate(fd, sizeof(struct Evaluador)) != 0)
     {
         cerr << "Error creando la memoria compartida: "
@@ -110,6 +121,7 @@ Evaluador *create_shared_mem(Header &auxHdr)
     struct Evaluador *pEval = (struct Evaluador *)dir;
 
     initialize_evaluador(pEval, auxHdr);
+    initialize_buffers(pEval);
     create_semaphores(pEval);
 
     close(fd);
