@@ -84,12 +84,10 @@ void create_semaphores(Evaluador *pEval)
     sem_open("BIVB", O_CREAT | O_EXCL, 0660, pEval->hdr.q);
     sem_open("BILB", O_CREAT | O_EXCL, 0660, 0);
     sem_open("BIMB", O_CREAT | O_EXCL, 0660, 1);
-
     // Semaforos Reactivo D
     sem_open("BIVD", O_CREAT | O_EXCL, 0660, pEval->hdr.q);
     sem_open("BILD", O_CREAT | O_EXCL, 0660, 0);
     sem_open("BIMD", O_CREAT | O_EXCL, 0660, 1);
-
     // Semaforos Reactivo S
     sem_open("BIVS", O_CREAT | O_EXCL, 0660, pEval->hdr.q);
     sem_open("BILS", O_CREAT | O_EXCL, 0660, 0);
@@ -103,7 +101,7 @@ void create_semaphores(Evaluador *pEval)
 
 Evaluador *create_shared_mem(Header &auxHdr)
 {
-    int fd = shm_open("evaluador", O_RDWR | O_CREAT | O_EXCL, 0660);
+    int fd = shm_open(auxHdr.n, O_RDWR | O_CREAT | O_EXCL, 0660);
     if (ftruncate(fd, sizeof(struct Evaluador)) != 0)
     {
         cerr << "Error creando la memoria compartida: "

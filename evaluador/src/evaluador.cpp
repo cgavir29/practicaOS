@@ -30,17 +30,16 @@ int main(int argc, char *argv[])
     }
     else
     {
-        struct Evaluador *pEval;
         const string &command = argv[1];
 
         if (command == "init")
         {
-            pEval = handle_init(2, argc, argv);
+            struct Evaluador *pEval = handle_init(2, argc, argv);
 
-            int fd = shm_open("evaluador", O_RDONLY, 0660);
+            int fd = shm_open(pEval->hdr.n, O_RDONLY, 0660);
             while (fd != -1)
             {
-                fd = shm_open("evaluador", O_RDONLY, 0660);
+                fd = shm_open(pEval->hdr.n, O_RDONLY, 0660);
                 close(fd);
             }
 
