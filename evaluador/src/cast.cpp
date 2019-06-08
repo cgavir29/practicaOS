@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int string_cast(const string& val)
+int string_cast(const string &val)
 {
     try
     {
@@ -15,18 +15,19 @@ int string_cast(const string& val)
     {
         string_not_num(val);
     }
+    return -1;
 }
 
-int string_cast_pos(const string& val) 
+int string_cast_pos(const string &val)
 {
     try
     {
         int num = stoi(val);
-        if (num < 0) 
+        if (num < 0)
         {
             num_not_positive(num);
-        } 
-        else 
+        }
+        else
         {
             return num;
         }
@@ -35,4 +36,5 @@ int string_cast_pos(const string& val)
     {
         string_not_num(val);
     }
+    return -1;
 }

@@ -18,22 +18,31 @@ using namespace std;
 void handle_ctrl_sub_update_opt_s(const string &val, struct Evaluador *pEval)
 {
     int num = string_cast_pos(val);
+    sem_t* mutex = sem_open("RSM", 0);
+
+    sem_wait(mutex);
     pEval->hdr.s = pEval->hdr.s + num;
-
-
+    sem_post(mutex);
 }
 
 void handle_ctrl_sub_update_opt_d(const string &val, struct Evaluador *pEval)
 {
     int num = string_cast_pos(val);
-    pEval->hdr.d = pEval->hdr.d + num;
+    sem_t* mutex = sem_open("RDM", 0);
 
+    sem_wait(mutex);
+    pEval->hdr.d = pEval->hdr.d + num;
+    sem_post(mutex);
 }
 
 void handle_ctrl_sub_update_opt_b(const string &val, struct Evaluador *pEval)
 {
     int num = string_cast_pos(val);
+    sem_t* mutex = sem_open("RBM", 0);
+
+    sem_wait(mutex);
     pEval->hdr.b = pEval->hdr.b + num;
+    sem_post(mutex);
 }
 
 void handle_ctrl_sub_update(const string &sub_command_info, struct Evaluador *pEval)
@@ -89,7 +98,7 @@ void handle_ctrl_sub_list_opt_repo(struct Evaluador *pEval)
         current_exam = pEval->ban_out.buffer[i];
         if (current_exam.cantidad != 0)
         {
-            cout << current_exam.id << " " << i << " " << current_exam.tipo
+            cout << current_exam.id << " " << current_exam.ban << " " << current_exam.tipo
                  << " " << current_exam.informe << endl;
         }
     }
@@ -110,7 +119,7 @@ void handle_ctrl_sub_list_opt_wait(struct Evaluador *pEval)
             current_exam = pEval->ban_en.bandejas[i].buffer[j];
             if (current_exam.cantidad != 0)
             {
-                cout << current_exam.id << " " << i << " " << current_exam.tipo
+                cout << current_exam.id << " " << current_exam.ban << " " << current_exam.tipo
                      << " " << current_exam.cantidad << endl;
             }
         }
@@ -132,7 +141,7 @@ void handle_ctrl_sub_list_opt_proc(struct Evaluador *pEval)
             current_exam = pEval->ban_in.bandejas[i].buffer[j];
             if (current_exam.cantidad != 0)
             {
-                cout << current_exam.id << " " << i << " " << current_exam.tipo
+                cout << current_exam.id << " " << current_exam.ban << " " << current_exam.tipo
                      << " " << current_exam.cantidad << " " << current_exam.tiempo << endl;
             }
         }

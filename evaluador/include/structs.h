@@ -7,7 +7,8 @@
 #define LEN_BAN_INTERNA 100
 #define LEN_BAN_SALIDA 100
 
-struct Header {
+struct Header
+{
     int i;
     int ie;
     int oe;
@@ -18,15 +19,18 @@ struct Header {
     int q;
 };
 
-struct Examen {
+struct Examen
+{
     int id;
+    int ban;
     char tipo;
     int cantidad;
     int tiempo;
     char informe;
 };
 
-struct BandejaEntrada {
+struct BandejaEntrada
+{
     int id_counter;
     int entra;
     int sale;
@@ -34,30 +38,34 @@ struct BandejaEntrada {
     struct Examen buffer[LEN_BAN_ENTRA];
 };
 
-struct BandejaEntradaEntry {
+struct BandejaEntradaEntry
+{
     struct BandejaEntrada bandejas[LEN_BAN_ENTRA_ENTRY];
 };
 
-struct BandejaInterna {
+struct BandejaInterna
+{
     int entra;
     int sale;
     int cantidad;
-    // int total_reactivo; // Si hace parte
     struct Examen buffer[LEN_BAN_INTERNA];
 };
 
-struct BandejaInternaEntry {
+struct BandejaInternaEntry
+{
     struct BandejaInterna bandejas[NUM_TIPO_REACTS];
 };
 
-struct BandejaSalida {
+struct BandejaSalida
+{
     int entra;
     int sale;
     int cantidad;
     struct Examen buffer[LEN_BAN_SALIDA];
 };
 
-struct Evaluador {
+struct Evaluador
+{
     struct Header hdr;
     struct BandejaEntradaEntry ban_en;
     struct BandejaInternaEntry ban_in;

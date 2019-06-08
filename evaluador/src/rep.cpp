@@ -1,87 +1,71 @@
+#include <fcntl.h>
+#include <errno.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <semaphore.h>
+#include <sstream>
 #include <iostream>
-#include <string>
+#include <cstdlib>
+#include <cstring>
+#include <fstream>
+#include "structs.h"
 #include "errs.h"
 #include "cast.h"
 #include "rep.h"
 
 using namespace std;
 
-
-// void handle_rep_opt_n(string option_info) { // que reciba el string del shared mem mas la otra opcion 
-//     // string shared_mem;
-//     cout << option_info << endl;
-
-    
-//     string option;
-//     string val;
-
-//     // option = sub_command_info.substr(sub_command_info.find(" "));
-//     // val = sub_command_info.substr(option.length() + 1);
-// }
-
-// void handle_rep(int start, int end, char *argv[]) {
-//     string option;
-//     string option_info;
-    
-//     for (int i = start; i < end; i++) // hacerlo llegar hasta antes del {-i | -m}
-//     {
-//         option = argv[i];
-
-//         if (i + 1 < end) 
-//         {
-//             option_info = argv[i + 1];
-//         }
-
-//         if (option == "-n")
-//         {
-//             check_value(option, option_info);
-//             handle_rep_opt_n(option_info);
-//             i++;
-//             continue;
-//         } else
-//         {
-//             option_not_supported(option);
-//         }
-        
-        
-//     }
-    
-// }
-
-
-
-void handle_rep(char* argv[]) {
+void handle_rep(char *argv[])
+{
     string option = argv[2];
-    // cout << option << endl;
-    string option_value = argv[3];
-    // cout << option_value << endl;
+    char *option_value = argv[3];
     string extra_option = argv[4];
-    // cout << extra_option << endl;
     int extra_option_value = string_cast_pos(argv[5]);
-    // cout << extra_option_value << endl;
 
-    if (option != "-n") 
+    if (option != "-n")
     {
         option_not_supported(option);
     }
 
-    if (extra_option == "-i") 
+    int fd = shm_open(option_value, O_RDWR, 0660);
+    if (fd < 0)
+    {
+        cerr << "Couldn't find shared memory segment '" << option_value
+             << "': " << strerror(errno) << endl;
+        exit(1);
+    }
+
+    void *dir;
+    if ((dir = mmap(NULL, sizeof(struct Evaluador), PROT_READ | PROT_WRITE, MAP_SHARED,
+                    fd, 0)) == MAP_FAILED)
+    {
+        cerr << "Error mapeando la memoria compartida: "
+             << errno << strerror(errno) << endl;
+        exit(1);
+    }
+
+    struct Evaluador *pEval = (struct Evaluador *)dir;
+
+
+
+    if (extra_option == "-i")
     {
         // Encuentra examenes hasta i <integer> segundos?
-    } 
+    }
     else if (extra_option == "-m")
     {
         // Encuentra m <integer> numero de examenes?
     }
-    else 
+    else
     {
         option_not_supported(extra_option);
     }
 
-
-    int id = 5; // Identificador
-    int i = 3; // 'i' Cola de entrada
-    char k[] = "Tipo Muestra"; // Tipo de muestra
+    int id = 5;                   // Identificador
+    int i = 3;                    // 'i' Cola de entrada
+    char k[] = "Tipo Muestra";    // Tipo de muestra
     char r[] = "Informe Muestra"; // Informe final de la muestra
     cout << "[" << id << " " << i << " " << k << " " << r << "]" << endl;
 }

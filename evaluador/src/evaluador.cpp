@@ -37,10 +37,10 @@ int main(int argc, char *argv[])
         {
             struct Evaluador *pEval = handle_init(2, argc, argv);
 
-            int fd = shm_open(pEval->hdr.n, O_RDONLY, 0660);
+            int fd = shm_open(pEval->hdr.n, O_RDWR, 0660);
             while (fd != -1)
             {
-                fd = shm_open(pEval->hdr.n, O_RDONLY, 0660);
+                fd = shm_open(pEval->hdr.n, O_RDWR, 0660);
                 close(fd);
             }
 
