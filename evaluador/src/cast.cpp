@@ -36,7 +36,3 @@ int string_cast_pos(const string& val)
         string_not_num(val);
     }
 }
-
-void char_to_string(const string& val, char *target) {
-    
-}

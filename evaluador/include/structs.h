@@ -1,8 +1,11 @@
 #pragma once
 
 #define LEN_MEM_NAME 40
-#define LEN_BAN_ENTRA 100
 #define LEN_BAN_ENTRA_ENTRY 50
+#define LEN_BAN_ENTRA 100
+#define NUM_TIPO_REACTS 3
+#define LEN_BAN_INTERNA 100
+#define LEN_BAN_SALIDA 100
 
 struct Header {
     int i;
@@ -25,7 +28,6 @@ struct BandejaEntrada {
     int entra;
     int sale;
     int cantidad;
-//   int tamano;
     struct Examen buffer[LEN_BAN_ENTRA];
 };
 
@@ -33,7 +35,28 @@ struct BandejaEntradaEntry {
     struct BandejaEntrada bandejas[LEN_BAN_ENTRA_ENTRY];
 };
 
+struct BandejaInterna {
+    int entra;
+    int sale;
+    int cantidad;
+    // int total_reactivo; // Si hace parte
+    struct Examen buffer[LEN_BAN_INTERNA];
+};
+
+struct BandejaInternaEntry {
+    struct BandejaInterna bandejas[NUM_TIPO_REACTS];
+};
+
+struct BandejaSalida {
+    int entra;
+    int sale;
+    int cantidad;
+    struct Examen buffer[LEN_BAN_SALIDA];
+};
+
 struct Evaluador {
     struct Header hdr;
-    struct BandejaEntradaEntry bee;
+    struct BandejaEntradaEntry ban_en;
+    struct BandejaInternaEntry ban_in;
+    struct BandejaSalida ban_out;
 };
