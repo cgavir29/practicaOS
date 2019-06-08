@@ -37,9 +37,11 @@ int main(int argc, char *argv[])
         {
             pEval = handle_init(2, argc, argv);
 
-            int fd = shm_open("evaluador", O_RDWR, 0660);
-            while (fd != -1) {
-                fd = shm_open("evaluador", O_RDWR, 0660);
+            int fd = shm_open("evaluador", O_RDONLY, 0660);
+            while (fd != -1)
+            {
+                fd = shm_open("evaluador", O_RDONLY, 0660);
+                close(fd);
             }
 
             exit(0);
@@ -64,7 +66,6 @@ int main(int argc, char *argv[])
         {
             command_not_supported(command);
         }
-
     }
 
     return 0;

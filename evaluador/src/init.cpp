@@ -95,6 +95,8 @@ Evaluador *create_shared_mem(Header &auxHdr)
     initialize_evaluador(pEval, auxHdr);
     create_semaphores(pEval);
 
+    close(fd);
+
     return pEval;
 }
 
