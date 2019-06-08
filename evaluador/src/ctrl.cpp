@@ -15,25 +15,28 @@
 
 using namespace std;
 
-void handle_ctrl_sub_update_opt_s(const string &val)
+void handle_ctrl_sub_update_opt_s(const string &val, struct Evaluador *pEval)
 {
     int num = string_cast_pos(val);
-    // cout << "Num = " << num << endl;
+    pEval->hdr.s = pEval->hdr.s + num;
+
+
 }
 
-void handle_ctrl_sub_update_opt_d(const string &val)
+void handle_ctrl_sub_update_opt_d(const string &val, struct Evaluador *pEval)
 {
     int num = string_cast_pos(val);
-    // cout << "Num = " << num << endl;
+    pEval->hdr.d = pEval->hdr.d + num;
+
 }
 
-void handle_ctrl_sub_update_opt_b(const string &val)
+void handle_ctrl_sub_update_opt_b(const string &val, struct Evaluador *pEval)
 {
     int num = string_cast_pos(val);
-    // cout << "Num = " << num << endl;
+    pEval->hdr.b = pEval->hdr.b + num;
 }
 
-void handle_ctrl_sub_update(const string &sub_command_info)
+void handle_ctrl_sub_update(const string &sub_command_info, struct Evaluador *pEval)
 {
     string option;
     string val;
@@ -49,36 +52,49 @@ void handle_ctrl_sub_update(const string &sub_command_info)
 
     if (option == "B")
     {
-        handle_ctrl_sub_update_opt_b(val);
+        handle_ctrl_sub_update_opt_b(val, pEval);
     }
     else if (option == "D")
     {
-        handle_ctrl_sub_update_opt_d(val);
+        handle_ctrl_sub_update_opt_d(val, pEval);
     }
     else if (option == "S")
     {
-        handle_ctrl_sub_update_opt_s(val);
+        handle_ctrl_sub_update_opt_s(val, pEval);
     }
     else
     {
-        // option_not_supported(option);
+        option_not_supported(option);
     }
 }
 
-void handle_ctrl_sub_list_opt_reac()
+void handle_ctrl_sub_list_opt_reac(struct Evaluador *pEval)
 {
-    // No esta en presentacion
+    cout << "Reactives: " << endl;
+    cout << "[";
+    cout << "Blood = " << pEval->hdr.b << endl;
+    cout << "Detritus = " << pEval->hdr.d << endl;
+    cout << "Skin = " << pEval->hdr.s;
+    cout << "]" << endl;
 }
 
-void handle_ctrl_sub_list_opt_repo()
+void handle_ctrl_sub_list_opt_repo(struct Evaluador *pEval)
 {
-    int id;
-    int i;
-    char *k;
-    char *r;
-
     cout << "Reported:" << endl;
-    cout << "[" << id << " " << i << " " << k << " " << r << "]" << endl;
+    cout << "[";
+
+    struct Examen current_exam;
+    for (int i = 0; i < pEval->hdr.oe; i++)
+    {
+        current_exam = pEval->ban_out.buffer[i];
+        if (current_exam.cantidad != 0)
+        {
+            cout << current_exam.id << " " << i << " " << current_exam.tipo
+                 << " " << current_exam.informe << endl;
+        }
+    }
+
+    cout << "]" << endl;
 }
 
 void handle_ctrl_sub_list_opt_wait(struct Evaluador *pEval)
@@ -87,46 +103,57 @@ void handle_ctrl_sub_list_opt_wait(struct Evaluador *pEval)
     cout << "[";
 
     struct Examen current_exam;
-    for (size_t i = 0; i < pEval->hdr.i; i++)
+    for (int i = 0; i < pEval->hdr.i; i++)
     {
-        for (size_t j = 0; j < pEval->hdr.ie; j++)
+        for (int j = 0; j < pEval->hdr.ie; j++)
         {
             current_exam = pEval->ban_en.bandejas[i].buffer[j];
             if (current_exam.cantidad != 0)
             {
-                cout << current_exam.id << " " << i << " " << current_exam.tipo << " " << current_exam.cantidad << endl;
+                cout << current_exam.id << " " << i << " " << current_exam.tipo
+                     << " " << current_exam.cantidad << endl;
             }
         }
     }
+
     cout << "]" << endl;
 }
 
-void handle_ctrl_sub_list_opt_proc()
+void handle_ctrl_sub_list_opt_proc(struct Evaluador *pEval)
 {
-    int id;
-    int i;
-    char *k;
-    int q;
-    int p;
-
     cout << "Processing:" << endl;
-    cout << "[" << id << " " << i << " " << k << " " << q << " " << p << "]" << endl;
+    cout << "[";
+
+    struct Examen current_exam;
+    for (int i = 0; i < NUM_TIPO_REACTS; i++)
+    {
+        for (int j = 0; j < pEval->hdr.q; j++)
+        {
+            current_exam = pEval->ban_in.bandejas[i].buffer[j];
+            if (current_exam.cantidad != 0)
+            {
+                cout << current_exam.id << " " << i << " " << current_exam.tipo
+                     << " " << current_exam.cantidad << " " << current_exam.tiempo << endl;
+            }
+        }
+    }
+
+    cout << "]" << endl;
 }
 
-void handle_ctrl_sub_list_opt_all()
+void handle_ctrl_sub_list_opt_all(struct Evaluador *pEval)
 {
-    // No esta en la presentacion, supongo que todos...
-    handle_ctrl_sub_list_opt_proc();
-    // handle_ctrl_sub_list_opt_wait();
-    handle_ctrl_sub_list_opt_repo();
-    handle_ctrl_sub_list_opt_reac();
+    handle_ctrl_sub_list_opt_proc(pEval);
+    handle_ctrl_sub_list_opt_wait(pEval);
+    handle_ctrl_sub_list_opt_repo(pEval);
+    handle_ctrl_sub_list_opt_reac(pEval);
 }
 
 void handle_ctrl_sub_list(const string &option, struct Evaluador *pEval)
 {
     if (option == "processing")
     {
-        handle_ctrl_sub_list_opt_proc();
+        handle_ctrl_sub_list_opt_proc(pEval);
     }
     else if (option == "waiting")
     {
@@ -134,15 +161,15 @@ void handle_ctrl_sub_list(const string &option, struct Evaluador *pEval)
     }
     else if (option == "reported")
     {
-        handle_ctrl_sub_list_opt_repo();
+        handle_ctrl_sub_list_opt_repo(pEval);
     }
     else if (option == "reactive")
     {
-        handle_ctrl_sub_list_opt_reac();
+        handle_ctrl_sub_list_opt_reac(pEval);
     }
     else if (option == "all")
     {
-        handle_ctrl_sub_list_opt_all();
+        handle_ctrl_sub_list_opt_all(pEval);
     }
     else
     {
@@ -152,8 +179,13 @@ void handle_ctrl_sub_list(const string &option, struct Evaluador *pEval)
 
 void handle_ctrl(char *argv[])
 {
-    char *option = argv[2];
+    string option = argv[2];
     char *option_value = argv[3];
+
+    if (option != "-n")
+    {
+        option_not_supported(option);
+    }
 
     int fd = shm_open(option_value, O_RDWR, 0660);
     if (fd < 0)
@@ -197,7 +229,7 @@ void handle_ctrl(char *argv[])
         else if (sub_command == "update")
         {
             // check_value(sub_command, sub_command_info);
-            handle_ctrl_sub_update(sub_command_info);
+            handle_ctrl_sub_update(sub_command_info, pEval);
         }
 
         sub_command.clear();

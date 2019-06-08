@@ -81,15 +81,15 @@ void create_semaphores(Evaluador *pEval)
     }
 
     // Semaforos Bandejas Internas
-    // Semaforos Reactivo B
+    // Semaforos Bandeja B
     sem_open("BIVB", O_CREAT | O_EXCL, 0660, pEval->hdr.q);
     sem_open("BILB", O_CREAT | O_EXCL, 0660, 0);
     sem_open("BIMB", O_CREAT | O_EXCL, 0660, 1);
-    // Semaforos Reactivo D
+    // Semaforos Bandeja D
     sem_open("BIVD", O_CREAT | O_EXCL, 0660, pEval->hdr.q);
     sem_open("BILD", O_CREAT | O_EXCL, 0660, 0);
     sem_open("BIMD", O_CREAT | O_EXCL, 0660, 1);
-    // Semaforos Reactivo S
+    // Semaforos Bandeja S
     sem_open("BIVS", O_CREAT | O_EXCL, 0660, pEval->hdr.q);
     sem_open("BILS", O_CREAT | O_EXCL, 0660, 0);
     sem_open("BIMS", O_CREAT | O_EXCL, 0660, 1);
@@ -98,6 +98,11 @@ void create_semaphores(Evaluador *pEval)
     sem_open("BSV", O_CREAT | O_EXCL, 0660, pEval->hdr.oe);
     sem_open("BSL", O_CREAT | O_EXCL, 0660, 0);
     sem_open("BSM", O_CREAT | O_EXCL, 0660, 1);
+
+    // Semaforos Reactivos
+    sem_open("RBM", O_CREAT | O_EXCL, 0660, 1);
+    sem_open("RDM", O_CREAT | O_EXCL, 0660, 1);
+    sem_open("RSM", O_CREAT | O_EXCL, 0660, 1);
 }
 
 Evaluador *create_shared_mem(Header &auxHdr)

@@ -32,15 +32,15 @@ void delete_semaphores(Evaluador *pEval)
     }
 
     // Semaforos Bandejas Internas
-    // Semaforos Reactivo B
+    // Semaforos Bandeja B
     sem_unlink("BIVB");
     sem_unlink("BILB");
     sem_unlink("BIMB");
-    // Semaforos Reactivo D
+    // Semaforos Bandeja D
     sem_unlink("BIVD");
     sem_unlink("BILD");
     sem_unlink("BIMD");
-    // Semaforos Reactivo S
+    // Semaforos Bandeja S
     sem_unlink("BIVS");
     sem_unlink("BILS");
     sem_unlink("BIMS");
@@ -49,6 +49,11 @@ void delete_semaphores(Evaluador *pEval)
     sem_unlink("BSV");
     sem_unlink("BSL");
     sem_unlink("BSM");
+
+    // Semaforos Reactivos
+    sem_unlink("RBM");
+    sem_unlink("RDM");
+    sem_unlink("RSM");
 }
 
 void handle_stop(char *argv[])
