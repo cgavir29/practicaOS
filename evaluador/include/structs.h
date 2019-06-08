@@ -25,6 +25,7 @@ struct Examen {
 };
 
 struct BandejaEntrada {
+    int id_counter;
     int entra;
     int sale;
     int cantidad;

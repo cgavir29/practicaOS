@@ -34,6 +34,7 @@ void initialize_buffers(Evaluador *pEval)
     // Buffers de Bandejas de Entrada
     for (int k = 0; k < pEval->hdr.i; k++)
     {
+        pEval->ban_en.bandejas[k].id_counter = 0;
         pEval->ban_en.bandejas[k].entra = 0;
         pEval->ban_en.bandejas[k].sale = 0;
         pEval->ban_en.bandejas[k].cantidad = 0;

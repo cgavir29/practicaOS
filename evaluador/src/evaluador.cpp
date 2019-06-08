@@ -8,6 +8,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
+#include <fstream>
 #include "errs.h"
 #include "structs.h"
 #include "cast.h"
