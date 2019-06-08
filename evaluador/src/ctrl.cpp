@@ -94,7 +94,7 @@ void handle_ctrl_sub_list_opt_wait(struct Evaluador *pEval)
             current_exam = pEval->ban_en.bandejas[i].buffer[j];
             if (current_exam.cantidad != 0)
             {
-                cout << current_exam.id << " " << i << " " << current_exam.reactivo << " " << current_exam.cantidad << endl;
+                cout << current_exam.id << " " << i << " " << current_exam.tipo << " " << current_exam.cantidad << endl;
             }
         }
     }

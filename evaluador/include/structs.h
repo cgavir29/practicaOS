@@ -20,8 +20,10 @@ struct Header {
 
 struct Examen {
     int id;
-    char reactivo;
+    char tipo;
     int cantidad;
+    int tiempo;
+    char informe;
 };
 
 struct BandejaEntrada {
