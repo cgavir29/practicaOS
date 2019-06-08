@@ -1,16 +1,17 @@
 #pragma once
 
 #include <string>
+#include "structs.h"
 
 using namespace std;
 
 void handle_ctrl(char* argv[]);
 
-void handle_ctrl_sub_list(const string& option);
+void handle_ctrl_sub_list(const string& option, struct Evaluador *pEval);
 
 void handle_ctrl_sub_list_opt_proc();
 
-void handle_ctrl_sub_list_opt_wait();
+void handle_ctrl_sub_list_opt_wait(struct Evaluador *pEval);
 
 void handle_ctrl_sub_list_opt_repo();
 

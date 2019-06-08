@@ -1,4 +1,14 @@
+#include <fcntl.h>
+#include <errno.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <semaphore.h>
 #include <iostream>
+#include <cstdlib>
+#include <cstring>
+#include <fstream>
 #include "errs.h"
 #include "cast.h"
 #include "ctrl.h"
@@ -71,15 +81,24 @@ void handle_ctrl_sub_list_opt_repo()
     cout << "[" << id << " " << i << " " << k << " " << r << "]" << endl;
 }
 
-void handle_ctrl_sub_list_opt_wait()
+void handle_ctrl_sub_list_opt_wait(struct Evaluador *pEval)
 {
-    int id;
-    int i;
-    char *k;
-    int q; 
-
     cout << "Waiting:" << endl;
-    cout << "[" << id << " " << i << " " << k << " " << q << "]" << endl;
+    cout << "[";
+
+    struct Examen current_exam;
+    for (size_t i = 0; i < pEval->hdr.i; i++)
+    {
+        for (size_t j = 0; j < pEval->hdr.ie; j++)
+        {
+            current_exam = pEval->ban_en.bandejas[i].buffer[j];
+            if (current_exam.cantidad != 0)
+            {
+                cout << current_exam.id << " " << i << " " << current_exam.reactivo << " " << current_exam.cantidad << endl;
+            }
+        }
+    }
+    cout << "]" << endl;
 }
 
 void handle_ctrl_sub_list_opt_proc()
@@ -98,12 +117,12 @@ void handle_ctrl_sub_list_opt_all()
 {
     // No esta en la presentacion, supongo que todos...
     handle_ctrl_sub_list_opt_proc();
-    handle_ctrl_sub_list_opt_wait();
+    // handle_ctrl_sub_list_opt_wait();
     handle_ctrl_sub_list_opt_repo();
     handle_ctrl_sub_list_opt_reac();
 }
 
-void handle_ctrl_sub_list(const string &option)
+void handle_ctrl_sub_list(const string &option, struct Evaluador *pEval)
 {
     if (option == "processing")
     {
@@ -111,7 +130,7 @@ void handle_ctrl_sub_list(const string &option)
     }
     else if (option == "waiting")
     {
-        handle_ctrl_sub_list_opt_wait();
+        handle_ctrl_sub_list_opt_wait(pEval);
     }
     else if (option == "reported")
     {
@@ -136,6 +155,25 @@ void handle_ctrl(char *argv[])
     char *option = argv[2];
     char *option_value = argv[3];
 
+    int fd = shm_open(option_value, O_RDWR, 0660);
+    if (fd < 0)
+    {
+        cerr << "Couldn't find shared memory segment '" << option_value
+             << "': " << strerror(errno) << endl;
+        exit(1);
+    }
+
+    void *dir;
+    if ((dir = mmap(NULL, sizeof(struct Evaluador), PROT_READ | PROT_WRITE, MAP_SHARED,
+                    fd, 0)) == MAP_FAILED)
+    {
+        cerr << "Error mapeando la memoria compartida: "
+             << errno << strerror(errno) << endl;
+        exit(1);
+    }
+
+    struct Evaluador *pEval = (struct Evaluador *)dir;
+
     string input;
     string sub_command;
     string sub_command_info;
@@ -150,14 +188,11 @@ void handle_ctrl(char *argv[])
             sub_command = input.substr(0, input.find(" "));
             sub_command_info = input.substr(sub_command.length() + 1);
         }
-        // cout << "Input = " << input << endl;
-        // cout << "Sub_command = " << sub_command << endl;
-        // cout << "Sub_command_info = " << sub_command_info << endl;
 
         if (sub_command == "list")
         {
             // check_value(sub_command, sub_command_info);
-            handle_ctrl_sub_list(sub_command_info);
+            handle_ctrl_sub_list(sub_command_info, pEval);
         }
         else if (sub_command == "update")
         {
@@ -171,4 +206,6 @@ void handle_ctrl(char *argv[])
         cout << "> ";
         getline(cin, input);
     }
+
+    close(fd);
 }

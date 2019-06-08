@@ -53,8 +53,6 @@ int handle_reg_exams(int ban_i, char tipo_muestra, int cantidad, Evaluador *pEva
 
 void handle_reg_files(int start, int end, char *argv[], Evaluador *pEval)
 {
-    // cout << "Handling Files" << endl;
-
     ifstream infile;
     ofstream outfile;
 
@@ -96,7 +94,6 @@ void handle_reg(int size, char *argv[])
     }
 
     int fd = shm_open(option_value, O_RDWR, 0660);
-
     if (fd < 0)
     {
         cerr << "Couldn't find shared memory segment '" << option_value
@@ -105,7 +102,6 @@ void handle_reg(int size, char *argv[])
     }
 
     void *dir;
-
     if ((dir = mmap(NULL, sizeof(struct Evaluador), PROT_READ | PROT_WRITE, MAP_SHARED,
                     fd, 0)) == MAP_FAILED)
     {
