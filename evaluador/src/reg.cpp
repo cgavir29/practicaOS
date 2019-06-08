@@ -12,12 +12,11 @@
 #include <fstream>
 #include "errs.h"
 #include "cast.h"
-#include "structs.h"
 #include "reg.h"
 
 using namespace std;
 
-int reg_reg(int ban_i, char tipo_muestra, int cantidad, char *option_value)
+int handle_reg_exams(int ban_i, char tipo_muestra, int cantidad, Evaluador *pEval)
 {
     string ban_pos = to_string(ban_i);
     string be_vacios = "BEV" + ban_pos;
@@ -29,26 +28,6 @@ int reg_reg(int ban_i, char tipo_muestra, int cantidad, char *option_value)
     vacios = sem_open(be_vacios.c_str(), 0);
     llenos = sem_open(be_llenos.c_str(), 0);
     mutex = sem_open(be_mutex.c_str(), 0);
-
-    int fd = shm_open(option_value, O_RDWR, 0660);
-
-    if (fd < 0)
-    {
-        cerr << "Couldn't find shared memory segment '" << option_value
-             << "': " << strerror(errno) << endl;
-        exit(1);
-    }
-
-    void *dir;
-
-    if ((dir = mmap(NULL, sizeof(struct Evaluador), PROT_READ | PROT_WRITE, MAP_SHARED,
-                    fd, 0)) == MAP_FAILED)
-    {
-        cerr << "Error mapeando la memoria compartida: "
-             << errno << strerror(errno) << endl;
-        exit(1);
-    }
-    struct Evaluador *pEval = (struct Evaluador *)dir;
 
     sem_wait(vacios);
     sem_wait(mutex);
@@ -69,11 +48,10 @@ int reg_reg(int ban_i, char tipo_muestra, int cantidad, char *option_value)
     sem_post(mutex);
     sem_post(llenos);
 
-    close(fd);
     return id;
 }
 
-void handle_reg_files(int start, int end, char *argv[], char *option_value)
+void handle_reg_files(int start, int end, char *argv[], Evaluador *pEval)
 {
     // cout << "Handling Files" << endl;
 
@@ -91,12 +69,15 @@ void handle_reg_files(int start, int end, char *argv[], char *option_value)
 
         size_t lastindex = infile_name.find_last_of(".");
         string rawname = infile_name.substr(0, lastindex);
-        
+
+        if (infile.is_open())
+        {
+            outfile.open(rawname + ".spl");
+        }
 
         while (infile >> ban_i >> tipo_muestra >> cantidad)
         {
-            outfile.open(rawname + ".spl");
-            outfile << reg_reg(ban_i, tipo_muestra, cantidad, option_value) << endl;
+            outfile << handle_reg_exams(ban_i, tipo_muestra, cantidad, pEval) << endl;
         }
 
         infile.close();
@@ -114,6 +95,27 @@ void handle_reg(int size, char *argv[])
         option_not_supported(option);
     }
 
+    int fd = shm_open(option_value, O_RDWR, 0660);
+
+    if (fd < 0)
+    {
+        cerr << "Couldn't find shared memory segment '" << option_value
+             << "': " << strerror(errno) << endl;
+        exit(1);
+    }
+
+    void *dir;
+
+    if ((dir = mmap(NULL, sizeof(struct Evaluador), PROT_READ | PROT_WRITE, MAP_SHARED,
+                    fd, 0)) == MAP_FAILED)
+    {
+        cerr << "Error mapeando la memoria compartida: "
+             << errno << strerror(errno) << endl;
+        exit(1);
+    }
+
+    struct Evaluador *pEval = (struct Evaluador *)dir;
+
     if (size == 4)
     {
         int ban_i;
@@ -125,13 +127,15 @@ void handle_reg(int size, char *argv[])
 
         while (!cin.eof())
         {
-            cout << reg_reg(ban_i, tipo_muestra, cantidad, option_value) << endl;
+            cout << handle_reg_exams(ban_i, tipo_muestra, cantidad, pEval) << endl;
             cout << "> ";
             cin >> ban_i >> tipo_muestra >> cantidad;
         }
     }
     else
     {
-        handle_reg_files(4, size, argv, option_value);
+        handle_reg_files(4, size, argv, pEval);
     }
+
+    close(fd);
 }
