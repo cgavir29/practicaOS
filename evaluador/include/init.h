@@ -4,9 +4,9 @@
 
 using namespace std;
 
-
-
 void initialize_evaluador(Evaluador *pEval, Header &auxHdr);
+
+void initialize_buffers(Evaluador *pEval);
 
 void create_semaphores(Evaluador *pEval);
 
