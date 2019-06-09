@@ -18,7 +18,7 @@ using namespace std;
 void handle_ctrl_sub_update_opt_s(const string &val, struct Evaluador *pEval)
 {
     int num = string_cast_pos(val);
-    sem_t* mutex = sem_open("RSM", 0);
+    sem_t *mutex = sem_open("RSM", 0);
 
     sem_wait(mutex);
     pEval->hdr.s = pEval->hdr.s + num;
@@ -28,7 +28,7 @@ void handle_ctrl_sub_update_opt_s(const string &val, struct Evaluador *pEval)
 void handle_ctrl_sub_update_opt_d(const string &val, struct Evaluador *pEval)
 {
     int num = string_cast_pos(val);
-    sem_t* mutex = sem_open("RDM", 0);
+    sem_t *mutex = sem_open("RDM", 0);
 
     sem_wait(mutex);
     pEval->hdr.d = pEval->hdr.d + num;
@@ -38,7 +38,7 @@ void handle_ctrl_sub_update_opt_d(const string &val, struct Evaluador *pEval)
 void handle_ctrl_sub_update_opt_b(const string &val, struct Evaluador *pEval)
 {
     int num = string_cast_pos(val);
-    sem_t* mutex = sem_open("RBM", 0);
+    sem_t *mutex = sem_open("RBM", 0);
 
     sem_wait(mutex);
     pEval->hdr.b = pEval->hdr.b + num;
@@ -55,9 +55,6 @@ void handle_ctrl_sub_update(const string &sub_command_info, struct Evaluador *pE
         option = sub_command_info.substr(0, sub_command_info.find(" "));
         val = sub_command_info.substr(option.length() + 1);
     }
-
-    cout << "Option = " << option << endl;
-    cout << "Value = " << val << endl;
 
     if (option == "B")
     {

@@ -31,6 +31,8 @@ void handle_rep_opt_m(struct Evaluador *pEval)
     int i = pEval->ban_out.buffer[pEval->ban_out.sale].ban;
     char k = pEval->ban_out.buffer[pEval->ban_out.sale].tipo;
     char r = pEval->ban_out.buffer[pEval->ban_out.sale].informe;
+    
+    pEval->ban_out.buffer[pEval->ban_out.sale].cantidad = 0;
     pEval->ban_out.sale = (pEval->ban_out.sale + 1) % pEval->hdr.oe;
     pEval->ban_out.cantidad--;
 

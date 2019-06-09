@@ -122,7 +122,7 @@ void handle_evaluate(int ban_i, Evaluador *pEval)
         mutex_reactivo = sem_open("RSM", 0);
     }
 
-    sem_wait(mutex_reactivo);
+    // sem_wait(mutex_reactivo);
     cantidad_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].cantidad;
 
     // if (reactivo_tem == 'B')
@@ -155,7 +155,7 @@ void handle_evaluate(int ban_i, Evaluador *pEval)
     pEval->ban_en.bandejas[ban_i].sale = (pEval->ban_en.bandejas[ban_i].sale + 1) % pEval->hdr.ie;
     pEval->ban_en.bandejas[ban_i].cantidad--;
 
-    sem_post(mutex_reactivo);
+    // sem_post(mutex_reactivo);
 
     sem_post(mutex);
     sem_post(vacios);
@@ -201,8 +201,6 @@ void handle_evaluate(int ban_i, Evaluador *pEval)
 }
 void handle_salida(Evaluador *pEval)
 {
-
-
     sem_t *vacios, *llenos, *mutex;
 
     vacios = sem_open("BIVB", 0);
@@ -232,7 +230,7 @@ void handle_salida(Evaluador *pEval)
     sem_post(mutex);
     sem_post(vacios);
 
-        // Semaforos Bandeja de salida
+    // Semaforos Bandeja de salida
     vacios = sem_open("BSV", 0);
     llenos = sem_open("BSL", 0);
     mutex = sem_open("BSM", 0);
@@ -250,7 +248,6 @@ void handle_salida(Evaluador *pEval)
     sem_post(mutex);
     sem_post(llenos);
 }
-
 
 void handle_reg(int size, char *argv[])
 {
@@ -300,9 +297,10 @@ void handle_reg(int size, char *argv[])
     else
     {
         handle_reg_files(4, size, argv, pEval);
-        handle_salida(pEval);
+        
     }
 
     handle_evaluate(1, pEval);
+    handle_salida(pEval);
     close(fd);
 }
