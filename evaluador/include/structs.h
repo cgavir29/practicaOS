@@ -72,13 +72,12 @@ struct Evaluador
     struct BandejaSalida ban_out;
 };
 
-struct ParamsEntrada
-{
+struct ParamE {
     int ban_i;
-    struct Evaluador *pEval;
+    char shm_name[40];
 };
 
-struct ParamsInterna {
-    char tipo;
-    struct Evaluador *pEval;
+struct ParamI {
+    int tipo_rct;
+    char shm_name[40];
 };

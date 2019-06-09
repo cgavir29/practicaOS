@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <semaphore.h>
 #include <iostream>
+#include <pthread.h>
 #include <cstdlib>
 #include <cstring>
 #include "errs.h"
@@ -16,10 +17,9 @@ using namespace std;
 
 void *inter_to_salida(void *arg)
 {
-    struct ParamsInterna *pi = (struct ParamsInterna *)arg;
-    struct Evaluador *pEval = pi->pEval;
-    char tipo_react = pi->tipo;
-    int ban_reactivos;
+    struct ParamI *parI = (struct ParamI *)arg;
+    int tipo_rct = parI->tipo_rct;
+    string shm_name = string(parI->shm_name);
 
     int id_tem;
     int ban_tem;
@@ -28,47 +28,61 @@ void *inter_to_salida(void *arg)
 
     sem_t *vacios, *llenos, *mutex;
 
+    int fd = shm_open(shm_name.c_str(), O_RDWR, 0660);
+    if (fd < 0)
+    {
+        cerr << "Couldn't find shared memory segment '" << shm_name
+             << "': " << strerror(errno) << endl;
+        exit(1);
+    }
+
+    void *dir;
+    if ((dir = mmap(NULL, sizeof(struct Evaluador), PROT_READ | PROT_WRITE, MAP_SHARED,
+                    fd, 0)) == MAP_FAILED)
+    {
+        cerr << "Error mapeando la memoria compartida: "
+             << errno << strerror(errno) << endl;
+        exit(1);
+    }
+
+    struct Evaluador *pEval = (struct Evaluador *)dir;
+
     for (;;)
     {
-        if (tipo_react == 'B')
+        if (tipo_rct == 0)
         {
             // Semaforos Reactivo B
             vacios = sem_open("BIVB", 0);
             llenos = sem_open("BILB", 0);
             mutex = sem_open("BIMB", 0);
-            ban_reactivos = 0;
         }
-        else if (tipo_react == 'D')
+        else if (tipo_rct == 1)
         {
             // Semaforos Reactivo D
             vacios = sem_open("BIVD", 0);
             llenos = sem_open("BILD", 0);
             mutex = sem_open("BIMD", 0);
-            ban_reactivos = 1;
         }
-        else if (tipo_react == 'S')
+        else if (tipo_rct == 2)
         {
             // Semaforos Reactivo S
             vacios = sem_open("BIVS", 0);
             llenos = sem_open("BILS", 0);
             mutex = sem_open("BIMS", 0);
-            ban_reactivos = 2;
-        } else {
-            cout << "omg" << endl;
         }
 
         sem_wait(llenos);
         sem_wait(mutex);
 
-        id_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].id;
-        ban_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].ban;
-        reactivo_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].tipo;
-        cantidad_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].cant_react;
+        id_tem = pEval->ban_in.bandejas[tipo_rct].buffer[pEval->ban_in.bandejas[tipo_rct].sale].id;
+        ban_tem = pEval->ban_in.bandejas[tipo_rct].buffer[pEval->ban_in.bandejas[tipo_rct].sale].ban;
+        reactivo_tem = pEval->ban_in.bandejas[tipo_rct].buffer[pEval->ban_in.bandejas[tipo_rct].sale].tipo;
+        cantidad_tem = pEval->ban_in.bandejas[tipo_rct].buffer[pEval->ban_in.bandejas[tipo_rct].sale].cant_react;
 
         // Como si se hubiera borrado el examen de la cola interna
-        pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].cant_react = 0;
-        pEval->ban_in.bandejas[ban_reactivos].sale = (pEval->ban_in.bandejas[ban_reactivos].sale + 1) % pEval->hdr.q;
-        pEval->ban_in.bandejas[ban_reactivos].cantidad--;
+        pEval->ban_in.bandejas[tipo_rct].buffer[pEval->ban_in.bandejas[tipo_rct].sale].cant_react = 0;
+        pEval->ban_in.bandejas[tipo_rct].sale = (pEval->ban_in.bandejas[tipo_rct].sale + 1) % pEval->hdr.q;
+        pEval->ban_in.bandejas[tipo_rct].cantidad--;
 
         sem_post(mutex);
         sem_post(vacios);
@@ -95,9 +109,9 @@ void *inter_to_salida(void *arg)
 
 void *from_entr_to_inter(void *arg)
 {
-    struct ParamsEntrada *pe = (struct ParamsEntrada *)arg;
-    struct Evaluador *pEval = pe->pEval;
-    int ban_i = pe->ban_i;
+    struct ParamE *parE = (struct ParamE *)arg;
+    int ban_i = parE->ban_i;
+    string shm_name = string(parE->shm_name);
 
     int id_tem;
     int ban_tem;
@@ -111,7 +125,26 @@ void *from_entr_to_inter(void *arg)
 
     sem_t *vacios, *llenos, *mutex, *mutex_reactivo;
 
-    for (int i = 0; i < 4; i++)
+    int fd = shm_open(shm_name.c_str(), O_RDWR, 0660);
+    if (fd < 0)
+    {
+        cerr << "Couldn't find shared memory segment '" << shm_name
+             << "': " << strerror(errno) << endl;
+        exit(1);
+    }
+
+    void *dir;
+    if ((dir = mmap(NULL, sizeof(struct Evaluador), PROT_READ | PROT_WRITE, MAP_SHARED,
+                    fd, 0)) == MAP_FAILED)
+    {
+        cerr << "Error mapeando la memoria compartida: "
+             << errno << strerror(errno) << endl;
+        exit(1);
+    }
+
+    struct Evaluador *pEval = (struct Evaluador *)dir;
+
+    for (;;)
     {
         vacios = sem_open(be_vacios.c_str(), 0);
         llenos = sem_open(be_llenos.c_str(), 0);
@@ -320,45 +353,31 @@ void initialize_exams(Evaluador *pEval)
 void create_threads(Evaluador *pEval)
 {
     // Hilos Bandejas de Entrada
+    pthread_t hilosEntrada[LEN_BAN_ENTRA];
+    for (int i = 0; i < pEval->hdr.i; i++)
+    {
+        void *arg = malloc(sizeof(struct ParamE));
+        struct ParamE *parE = (struct ParamE *)arg;
+        parE->ban_i = i;
+        for (int j = 0; j < 40; j++)
+        {
+            parE->shm_name[j] = pEval->hdr.n[j];
+        }
+        pthread_create((hilosEntrada + i), NULL, from_entr_to_inter, (void *)parE);
+    }
 
-    // pthread_t hilosEntrada[pEval->hdr.i];
-    struct ParamsEntrada pe;
-    pe.ban_i = 1;
-    pe.pEval = pEval;
-
-    from_entr_to_inter((void *)&pe);
-    // pthread_t ban1;
-    // pthread_create(&ban1, NULL, *from_entr_to_inter, (void *)&pe);
-
-    // pthread_t hilosEntrada[LEN_BAN_ENTRA_ENTRY];
-    // for (int i = 0; i < pEval->hdr.i; i++)
-    // {
-    //     struct ParamsEntrada pe;
-    //     pe.ban_i = i;
-    //     pe.pEval = pEval;
-    //     pthread_create((hilosEntrada + i), NULL, *from_entr_to_inter, (void *)&pe);
-    // }
-
-    // Hijos Bandejas Internas
-    pthread_t thread_b, thread_d, thread_s;
-    struct ParamsInterna pib;
-    pib.tipo = 'B';
-    pib.pEval = pEval;
-    inter_to_salida((void *) &pib);
-    // pthread_create(&thread_b, NULL, *inter_to_salida, (void *)&pib);
-
-    // pthread_create(&thread_b, NULL, *inter_to_salida_b, (void *)pEval);
-
-    // struct ParamsInterna pid;
-    // pid.tipo = 'D';
-    // pid.pEval = pEval;
-    // pthread_create(&thread_d, NULL, *inter_to_salida, (void *)&pid);
-
-    // struct ParamsInterna pis;
-    // pis.tipo = 'S';
-    // pis.pEval = pEval;
-    // pthread_create(&thread_s, NULL, *inter_to_salida, (void *)&pis);
-    // cout << "Looking good" << endl;
+    pthread_t hilosInternos[NUM_TIPO_REACTS];
+    for (int i = 0; i < NUM_TIPO_REACTS; i++)
+    {
+        void *arg = malloc(sizeof(struct ParamI));
+        struct ParamI *parI = (struct ParamI *)arg;
+        parI->tipo_rct = i;
+        for (int j = 0; j < 40; j++)
+        {
+            parI->shm_name[j] = pEval->hdr.n[j];
+        }
+        pthread_create((hilosInternos + i), NULL, inter_to_salida, (void *)parI);
+    }
 }
 
 void create_semaphores(Evaluador *pEval)

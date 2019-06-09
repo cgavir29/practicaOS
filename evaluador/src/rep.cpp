@@ -17,58 +17,20 @@
 
 using namespace std;
 
-void handle_rep_opt_m(struct Evaluador *pEval)
+void handle_rep_opt_m(char *shm_mem, int requested)
 {
+    int reported = 0;
+
     sem_t *vacios, *llenos, *mutex;
 
     vacios = sem_open("BSV", 0);
     llenos = sem_open("BSL", 0);
     mutex = sem_open("BSM", 0);
 
-    sem_wait(llenos);
-    sem_wait(mutex);
-
-    int id = pEval->ban_out.buffer[pEval->ban_out.sale].id;
-    int i = pEval->ban_out.buffer[pEval->ban_out.sale].ban;
-    int cant = pEval->ban_out.buffer[pEval->ban_out.sale].cant_react;
-    char k = pEval->ban_out.buffer[pEval->ban_out.sale].tipo;
-    char r = pEval->ban_out.buffer[pEval->ban_out.sale].informe;
-
-    pEval->ban_out.buffer[pEval->ban_out.sale].cant_react = 0;
-    pEval->ban_out.sale = (pEval->ban_out.sale + 1) % pEval->hdr.oe;
-    pEval->ban_out.cantidad--;
-
-    sem_post(mutex);
-    sem_post(vacios);
-
-    cout << id << " " << i << " " << k << " " << r;
-
-    if (r == '?')
-    {
-        handle_reg_exams(i, k, cant, pEval);
-    }
-}
-
-void handle_rep_opt_i(struct Evaluador *pEval)
-{
-}
-
-void handle_rep(char *argv[])
-{
-    string option = argv[2];
-    char *option_value = argv[3];
-    string extra_option = argv[4];
-    int extra_option_value = string_cast_pos(argv[5]);
-
-    if (option != "-n")
-    {
-        option_not_supported(option);
-    }
-
-    int fd = shm_open(option_value, O_RDWR, 0660);
+    int fd = shm_open(shm_mem, O_RDWR, 0660);
     if (fd < 0)
     {
-        cerr << "Couldn't find shared memory segment '" << option_value
+        cerr << "Couldn't find shared memory segment '" << shm_mem
              << "': " << strerror(errno) << endl;
         exit(1);
     }
@@ -84,22 +46,80 @@ void handle_rep(char *argv[])
 
     struct Evaluador *pEval = (struct Evaluador *)dir;
 
+    cout << "[";
+    while (reported != requested)
+    {
+
+        sem_wait(llenos);
+        sem_wait(mutex);
+
+        int id = pEval->ban_out.buffer[pEval->ban_out.sale].id;
+        int i = pEval->ban_out.buffer[pEval->ban_out.sale].ban;
+        int cant = pEval->ban_out.buffer[pEval->ban_out.sale].cant_react;
+        char k = pEval->ban_out.buffer[pEval->ban_out.sale].tipo;
+        char r = pEval->ban_out.buffer[pEval->ban_out.sale].informe;
+
+        pEval->ban_out.buffer[pEval->ban_out.sale].cant_react = 0;
+        pEval->ban_out.sale = (pEval->ban_out.sale + 1) % pEval->hdr.oe;
+        pEval->ban_out.cantidad--;
+
+        sem_post(mutex);
+        sem_post(vacios);
+
+        cout << id << " " << i << " " << k << " " << r << endl;
+        reported++;
+
+        if (r == '?')
+        {
+            handle_reg_exams(i, k, cant, pEval);
+        }
+    }
+
+    close(fd);
+    cout << "]" << endl;
+}
+
+void handle_rep_opt_i(char *shm_mem, int time)
+{
+    int fd = shm_open(shm_mem, O_RDWR, 0660);
+    if (fd < 0)
+    {
+        cerr << "Couldn't find shared memory segment '" << shm_mem
+             << "': " << strerror(errno) << endl;
+        exit(1);
+    }
+
+    void *dir;
+    if ((dir = mmap(NULL, sizeof(struct Evaluador), PROT_READ | PROT_WRITE, MAP_SHARED,
+                    fd, 0)) == MAP_FAILED)
+    {
+        cerr << "Error mapeando la memoria compartida: "
+             << errno << strerror(errno) << endl;
+        exit(1);
+    }
+
+    close(fd);
+}
+
+void handle_rep(char *argv[])
+{
+    string option = argv[2];
+    char *option_value = argv[3];
+    string extra_option = argv[4];
+    int extra_option_value = string_cast_pos(argv[5]);
+
+    if (option != "-n")
+    {
+        option_not_supported(option);
+    }
+
     if (extra_option == "-i")
     {
-        handle_rep_opt_i(pEval);
+        handle_rep_opt_i(option_value, extra_option_value);
     }
     else if (extra_option == "-m")
     {
-        cout << "[";
-        for (int i = 0; i < extra_option_value; i++)
-        {
-            handle_rep_opt_m(pEval);
-            if (i != extra_option_value - 1)
-            {
-                cout << endl;
-            }
-        }
-        cout << "]" << endl;
+        handle_rep_opt_m(option_value, extra_option_value);
     }
     else
     {
