@@ -71,3 +71,14 @@ struct Evaluador
     struct BandejaInternaEntry ban_in;
     struct BandejaSalida ban_out;
 };
+
+struct ParamsEntrada
+{
+    int ban_i;
+    struct Evaluador *pEval;
+};
+
+struct ParamsInterna {
+    char tipo;
+    struct Evaluador *pEval;
+};
