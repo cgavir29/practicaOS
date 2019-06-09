@@ -199,6 +199,58 @@ void handle_evaluate(int ban_i, Evaluador *pEval)
     sem_post(mutex);
     sem_post(llenos);
 }
+void handle_salida(Evaluador *pEval)
+{
+
+
+    sem_t *vacios, *llenos, *mutex;
+
+    vacios = sem_open("BIVB", 0);
+    llenos = sem_open("BILB", 0);
+    mutex = sem_open("BIMB", 0);
+
+    int id_tem;
+    int ban_tem;
+    char reactivo_tem;
+    int cantidad_tem;
+
+    int ban_reactivos = 0;
+    sem_wait(llenos);
+    sem_wait(mutex);
+
+    id_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].id;
+    ban_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].ban;
+    reactivo_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].tipo;
+    cantidad_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].cantidad;
+
+    // Como si se hubiera borrado el examen de la cola de entrada
+    pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].cantidad = 0;
+
+    pEval->ban_in.bandejas[ban_reactivos].sale = (pEval->ban_in.bandejas[ban_reactivos].sale + 1) % pEval->hdr.q;
+    pEval->ban_in.bandejas[ban_reactivos].cantidad--;
+
+    sem_post(mutex);
+    sem_post(vacios);
+
+        // Semaforos Bandeja de salida
+    vacios = sem_open("BSV", 0);
+    llenos = sem_open("BSL", 0);
+    mutex = sem_open("BSM", 0);
+
+    sem_wait(vacios);
+    sem_wait(mutex);
+
+    pEval->ban_out.buffer[pEval->ban_out.entra].id = id_tem;
+    pEval->ban_out.buffer[pEval->ban_out.entra].ban = ban_tem;
+    pEval->ban_out.buffer[pEval->ban_out.entra].tipo = reactivo_tem;
+    pEval->ban_out.buffer[pEval->ban_out.entra].cantidad = cantidad_tem;
+    pEval->ban_out.entra = (pEval->ban_out.entra + 1) % pEval->hdr.oe;
+    pEval->ban_out.cantidad++;
+
+    sem_post(mutex);
+    sem_post(llenos);
+}
+
 
 void handle_reg(int size, char *argv[])
 {
@@ -248,6 +300,7 @@ void handle_reg(int size, char *argv[])
     else
     {
         handle_reg_files(4, size, argv, pEval);
+        handle_salida(pEval);
     }
 
     handle_evaluate(1, pEval);
