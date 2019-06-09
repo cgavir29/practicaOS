@@ -10,12 +10,39 @@
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
-#include "structs.h"
 #include "errs.h"
 #include "cast.h"
 #include "rep.h"
 
 using namespace std;
+
+void handle_rep_opt_m(struct Evaluador *pEval)
+{
+    sem_t *vacios, *llenos, *mutex;
+
+    vacios = sem_open("BSV", 0);
+    llenos = sem_open("BSL", 0);
+    mutex = sem_open("BSM", 0);
+
+    sem_wait(llenos);
+    sem_wait(mutex);
+
+    int id = pEval->ban_out.buffer[pEval->ban_out.sale].id;
+    int i = pEval->ban_out.buffer[pEval->ban_out.sale].ban;
+    char k = pEval->ban_out.buffer[pEval->ban_out.sale].tipo;
+    char r = pEval->ban_out.buffer[pEval->ban_out.sale].informe;
+    pEval->ban_out.sale = (pEval->ban_out.sale + 1) % pEval->hdr.oe;
+    pEval->ban_out.cantidad--;
+
+    sem_post(mutex);
+    sem_post(vacios);
+
+    cout << id << " " << i << " " << k << " " << r;
+}
+
+void handle_rep_opt_i(struct Evaluador *pEval)
+{
+}
 
 void handle_rep(char *argv[])
 {
@@ -48,24 +75,25 @@ void handle_rep(char *argv[])
 
     struct Evaluador *pEval = (struct Evaluador *)dir;
 
-
-
     if (extra_option == "-i")
     {
-        // Encuentra examenes hasta i <integer> segundos?
+        handle_rep_opt_i(pEval);
     }
     else if (extra_option == "-m")
     {
-        // Encuentra m <integer> numero de examenes?
+        cout << "[";
+        for (int i = 0; i < extra_option_value; i++)
+        {
+            handle_rep_opt_m(pEval);
+            if (i != extra_option_value - 1)
+            {
+                cout << endl;
+            }
+        }
+        cout << "]" << endl;
     }
     else
     {
         option_not_supported(extra_option);
     }
-
-    int id = 5;                   // Identificador
-    int i = 3;                    // 'i' Cola de entrada
-    char k[] = "Tipo Muestra";    // Tipo de muestra
-    char r[] = "Informe Muestra"; // Informe final de la muestra
-    cout << "[" << id << " " << i << " " << k << " " << r << "]" << endl;
 }

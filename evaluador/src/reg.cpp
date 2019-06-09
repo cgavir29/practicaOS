@@ -83,6 +83,7 @@ void handle_reg_files(int start, int end, char *argv[], Evaluador *pEval)
         outfile.close();
     }
 }
+
 void handle_evaluate(int ban_i, Evaluador *pEval)
 {
     string ban_pos = to_string(ban_i);
@@ -90,7 +91,7 @@ void handle_evaluate(int ban_i, Evaluador *pEval)
     string be_llenos = "BEL" + ban_pos;
     string be_mutex = "BEM" + ban_pos;
 
-    sem_t *vacios, *llenos, *mutex;
+    sem_t *vacios, *llenos, *mutex, *mutex_reactivo;
 
     vacios = sem_open(be_vacios.c_str(), 0);
     llenos = sem_open(be_llenos.c_str(), 0);
@@ -107,13 +108,54 @@ void handle_evaluate(int ban_i, Evaluador *pEval)
     id_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].id;
     ban_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].ban;
     reactivo_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].tipo;
+
+    if (reactivo_tem == 'B')
+    {
+        mutex_reactivo = sem_open("RBM", 0);
+    }
+    else if (reactivo_tem == 'D')
+    {
+        mutex_reactivo = sem_open("RDM", 0);
+    }
+    else if (reactivo_tem == 'S')
+    {
+        mutex_reactivo = sem_open("RSM", 0);
+    }
+
+    sem_wait(mutex_reactivo);
     cantidad_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].cantidad;
+
+    // if (reactivo_tem == 'B')
+    // {
+    //     if (cantidad_tem > pEval->hdr.b)
+    //     {
+    //         sem_post(mutex_reactivo);
+    //         sem_post(mutex);
+    //         sem_post(vacios);
+    //         return;
+    //     }
+    // }
+    // else if (reactivo_tem == 'D')
+    // {
+    //     if (cantidad_tem > pEval->hdr.d)
+    //     {
+    //         sem_wait(mutex_reactivo);
+    //     }
+    // }
+    // else if (reactivo_tem == 'S')
+    // {
+    //     if (cantidad_tem > pEval->hdr.s)
+    //     {
+    //         sem_wait(mutex_reactivo);
+    //     }
+    // }
 
     // Como si se hubiera borrado el examen de la cola de entrada
     pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].cantidad = 0;
-
     pEval->ban_en.bandejas[ban_i].sale = (pEval->ban_en.bandejas[ban_i].sale + 1) % pEval->hdr.ie;
     pEval->ban_en.bandejas[ban_i].cantidad--;
+
+    sem_post(mutex_reactivo);
 
     sem_post(mutex);
     sem_post(vacios);
@@ -207,7 +249,7 @@ void handle_reg(int size, char *argv[])
     {
         handle_reg_files(4, size, argv, pEval);
     }
-    
+
     handle_evaluate(1, pEval);
     close(fd);
 }
