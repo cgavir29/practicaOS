@@ -1,7 +1,7 @@
 #pragma once
 
 #define LEN_MEM_NAME 40
-#define LEN_BAN_ENTRA_ENTRY 50
+#define LEN_BAN_ENTRA_ENTRY 100
 #define LEN_BAN_ENTRA 100
 #define NUM_TIPO_REACTS 3
 #define LEN_BAN_INTERNA 100

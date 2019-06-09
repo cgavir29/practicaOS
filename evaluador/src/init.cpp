@@ -15,6 +15,7 @@
 
 using namespace std;
 
+// ------------------------------------------------------------------------------------------------
 void *inter_to_salida(void *arg)
 {
     struct ParamI *parI = (struct ParamI *)arg;
@@ -107,6 +108,7 @@ void *inter_to_salida(void *arg)
     }
 }
 
+// ------------------------------------------------------------------------------------------------
 void *from_entr_to_inter(void *arg)
 {
     struct ParamE *parE = (struct ParamE *)arg;
@@ -157,67 +159,65 @@ void *from_entr_to_inter(void *arg)
         ban_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].ban;
         reactivo_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].tipo;
 
-        // if (reactivo_tem == 'B')
-        // {
-        //     mutex_reactivo = sem_open("RBM", 0);
-        // }
-        // else if (reactivo_tem == 'D')
-        // {
-        //     mutex_reactivo = sem_open("RDM", 0);
-        // }
-        // else if (reactivo_tem == 'S')
-        // {
-        //     mutex_reactivo = sem_open("RSM", 0);
-        // }
+        if (reactivo_tem == 'B')
+        {
+            mutex_reactivo = sem_open("RBM", 0);
+        }
+        else if (reactivo_tem == 'D')
+        {
+            mutex_reactivo = sem_open("RDM", 0);
+        }
+        else if (reactivo_tem == 'S')
+        {
+            mutex_reactivo = sem_open("RSM", 0);
+        }
 
-        // sem_wait(mutex_reactivo);
+        sem_wait(mutex_reactivo);
 
         cantidad_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].cant_react;
-        // cout << "Id Tem = " << id_tem << " "
-        //      << "Tipo React = " << reactivo_tem << " "
-        //      << "Cantidad Tem = " << cantidad_tem << endl;
 
         // Verifica que haya suficiente material del reactivo correspondiente
-        // para realizar la muestra, en caso contrario, sale dando senal
-        // a todos los semaforos para intentar mas tarde.
-        // if (reactivo_tem == 'B')
-        // {
-        //     if (cantidad_tem > pEval->hdr.b)
-        //     {
-        //         sem_post(mutex_reactivo);
-        //         sem_post(mutex);
-        //         sem_post(vacios);
-        //         return nullptr;
-        //     }
-        // }
-        // else if (reactivo_tem == 'D')
-        // {
-        //     if (cantidad_tem > pEval->hdr.d)
-        //     {
-        //         sem_post(mutex_reactivo);
-        //         sem_post(mutex);
-        //         sem_post(vacios);
-        //         return nullptr;
-        //     }
-        // }
-        // else if (reactivo_tem == 'S')
-        // {
-        //     if (cantidad_tem > pEval->hdr.s)
-        //     {
-        //         sem_post(mutex_reactivo);
-        //         sem_post(mutex);
-        //         sem_post(vacios);
-        //         return nullptr;
-        //     }
-        // }
-
-        // sem_post(mutex_reactivo);
+        // para realizar la muestra, en caso contrario, espera evitando que entren mas examenes
+        // hasta que se aumente el reactivo
+        if (reactivo_tem == 'B')
+        {
+            while (cantidad_tem > pEval->hdr.b)
+            {
+                // Abro para que modifiquen
+                sem_post(mutex_reactivo);
+                // Cierro para leer
+                sem_wait(mutex_reactivo);
+                cantidad_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].cant_react;
+            }
+            pEval->hdr.b = pEval->hdr.b - cantidad_tem;
+        }
+        else if (reactivo_tem == 'D')
+        {
+            while (cantidad_tem > pEval->hdr.d)
+            {
+                sem_post(mutex_reactivo);
+                sem_wait(mutex_reactivo);
+                cantidad_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].cant_react;
+            }
+            pEval->hdr.d = pEval->hdr.d - cantidad_tem;
+        }
+        else if (reactivo_tem == 'S')
+        {
+            while (cantidad_tem > pEval->hdr.s)
+            {
+                sem_post(mutex_reactivo);
+                sem_wait(mutex_reactivo);
+                cantidad_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].cant_react;
+            }
+            pEval->hdr.s = pEval->hdr.s - cantidad_tem;
+        }
 
         // Como si se hubiera borrado el examen de la cola de entrada
         pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].cant_react = 0;
         pEval->ban_en.bandejas[ban_i].sale = (pEval->ban_en.bandejas[ban_i].sale + 1) % pEval->hdr.ie;
         pEval->ban_en.bandejas[ban_i].cantidad--;
 
+        sem_post(mutex_reactivo);
         sem_post(mutex);
         sem_post(vacios);
 
@@ -262,6 +262,7 @@ void *from_entr_to_inter(void *arg)
     }
 }
 
+// ------------------------------------------------------------------------------------------------
 void initialize_evaluador(Evaluador *pEval, Header &auxHdr)
 {
     pEval->hdr.i = auxHdr.i;
@@ -277,6 +278,7 @@ void initialize_evaluador(Evaluador *pEval, Header &auxHdr)
     pEval->hdr.q = auxHdr.q;
 }
 
+// ------------------------------------------------------------------------------------------------
 void initialize_buffers(Evaluador *pEval)
 {
     // Buffers de Bandejas de Entrada
@@ -308,6 +310,7 @@ void initialize_buffers(Evaluador *pEval)
     pEval->ban_out.cantidad = 0;
 }
 
+// ------------------------------------------------------------------------------------------------
 void initialize_exams(Evaluador *pEval)
 {
     // Exams Bandejas de Entrada
@@ -350,10 +353,11 @@ void initialize_exams(Evaluador *pEval)
     }
 }
 
+// ------------------------------------------------------------------------------------------------
 void create_threads(Evaluador *pEval)
 {
     // Hilos Bandejas de Entrada
-    pthread_t hilosEntrada[LEN_BAN_ENTRA];
+    pthread_t hilosEntrada[LEN_BAN_ENTRA_ENTRY];
     for (int i = 0; i < pEval->hdr.i; i++)
     {
         void *arg = malloc(sizeof(struct ParamE));
@@ -380,6 +384,7 @@ void create_threads(Evaluador *pEval)
     }
 }
 
+// ------------------------------------------------------------------------------------------------
 void create_semaphores(Evaluador *pEval)
 {
     // Semaforos Bandejas Entrada
@@ -425,6 +430,7 @@ void create_semaphores(Evaluador *pEval)
     sem_open("RSM", O_CREAT | O_EXCL, 0660, 1);
 }
 
+// ------------------------------------------------------------------------------------------------
 Evaluador *create_shared_mem(Header &auxHdr)
 {
     int fd = shm_open(auxHdr.n, O_RDWR | O_CREAT | O_EXCL, 0660);
@@ -457,6 +463,7 @@ Evaluador *create_shared_mem(Header &auxHdr)
     return pEval;
 }
 
+// ------------------------------------------------------------------------------------------------
 Evaluador *handle_init(int start, int end, char *argv[])
 {
     struct Header auxHdr;
