@@ -93,7 +93,7 @@ void handle_ctrl_sub_list_opt_repo(struct Evaluador *pEval)
     for (int i = 0; i < pEval->hdr.oe; i++)
     {
         current_exam = pEval->ban_out.buffer[i];
-        if (current_exam.cantidad != 0)
+        if (current_exam.cant_react != 0)
         {
             cout << current_exam.id << " " << current_exam.ban << " " << current_exam.tipo
                  << " " << current_exam.informe << endl;
@@ -114,10 +114,10 @@ void handle_ctrl_sub_list_opt_wait(struct Evaluador *pEval)
         for (int j = 0; j < pEval->hdr.ie; j++)
         {
             current_exam = pEval->ban_en.bandejas[i].buffer[j];
-            if (current_exam.cantidad != 0)
+            if (current_exam.cant_react != 0)
             {
                 cout << current_exam.id << " " << current_exam.ban << " " << current_exam.tipo
-                     << " " << current_exam.cantidad << endl;
+                     << " " << current_exam.cant_react << endl;
             }
         }
     }
@@ -136,10 +136,10 @@ void handle_ctrl_sub_list_opt_proc(struct Evaluador *pEval)
         for (int j = 0; j < pEval->hdr.q; j++)
         {
             current_exam = pEval->ban_in.bandejas[i].buffer[j];
-            if (current_exam.cantidad != 0)
+            if (current_exam.cant_react != 0)
             {
                 cout << current_exam.id << " " << current_exam.ban << " " << current_exam.tipo
-                     << " " << current_exam.cantidad << " " << current_exam.tiempo << endl;
+                     << " " << current_exam.cant_react << " " << current_exam.tiempo << endl;
             }
         }
     }

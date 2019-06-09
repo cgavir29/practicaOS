@@ -41,7 +41,7 @@ int handle_reg_exams(int ban_i, char tipo_muestra, int cantidad, Evaluador *pEva
     pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].entra].id = id;
     pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].entra].ban = ban_i;
     pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].entra].tipo = tipo_muestra;
-    pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].entra].cantidad = cantidad;
+    pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].entra].cant_react = cantidad;
     pEval->ban_en.bandejas[ban_i].entra = (pEval->ban_en.bandejas[ban_i].entra + 1) % pEval->hdr.ie;
     pEval->ban_en.bandejas[ban_i].id_counter++;
     pEval->ban_en.bandejas[ban_i].cantidad++;

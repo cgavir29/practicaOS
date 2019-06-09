@@ -24,7 +24,7 @@ struct Examen
     int id;
     int ban;
     char tipo;
-    int cantidad;
+    int cant_react;
     int tiempo;
     char informe;
 };

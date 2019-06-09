@@ -28,44 +28,45 @@ void *inter_to_salida(void *arg)
 
     sem_t *vacios, *llenos, *mutex;
 
-    if (tipo_react == 'B')
-    {
-        // Semaforos Reactivo B
-        vacios = sem_open("BIVB", 0);
-        llenos = sem_open("BILB", 0);
-        mutex = sem_open("BIMB", 0);
-        ban_reactivos = 0;
-    }
-    else if (tipo_react == 'D')
-    {
-        // Semaforos Reactivo D
-        vacios = sem_open("BIVD", 0);
-        llenos = sem_open("BILD", 0);
-        mutex = sem_open("BIMD", 0);
-        ban_reactivos = 1;
-    }
-    else if (tipo_react == 'S')
-    {
-        // Semaforos Reactivo S
-        vacios = sem_open("BIVS", 0);
-        llenos = sem_open("BILS", 0);
-        mutex = sem_open("BIMS", 0);
-        ban_reactivos = 2;
-    }
-
     for (;;)
     {
+        if (tipo_react == 'B')
+        {
+            // Semaforos Reactivo B
+            vacios = sem_open("BIVB", 0);
+            llenos = sem_open("BILB", 0);
+            mutex = sem_open("BIMB", 0);
+            ban_reactivos = 0;
+        }
+        else if (tipo_react == 'D')
+        {
+            // Semaforos Reactivo D
+            vacios = sem_open("BIVD", 0);
+            llenos = sem_open("BILD", 0);
+            mutex = sem_open("BIMD", 0);
+            ban_reactivos = 1;
+        }
+        else if (tipo_react == 'S')
+        {
+            // Semaforos Reactivo S
+            vacios = sem_open("BIVS", 0);
+            llenos = sem_open("BILS", 0);
+            mutex = sem_open("BIMS", 0);
+            ban_reactivos = 2;
+        } else {
+            cout << "omg" << endl;
+        }
+
         sem_wait(llenos);
         sem_wait(mutex);
 
         id_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].id;
         ban_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].ban;
         reactivo_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].tipo;
-        cantidad_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].cantidad;
+        cantidad_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].cant_react;
 
-        // Como si se hubiera borrado el examen de la cola de entrada
-        pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].cantidad = 0;
-
+        // Como si se hubiera borrado el examen de la cola interna
+        pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].cant_react = 0;
         pEval->ban_in.bandejas[ban_reactivos].sale = (pEval->ban_in.bandejas[ban_reactivos].sale + 1) % pEval->hdr.q;
         pEval->ban_in.bandejas[ban_reactivos].cantidad--;
 
@@ -83,7 +84,7 @@ void *inter_to_salida(void *arg)
         pEval->ban_out.buffer[pEval->ban_out.entra].id = id_tem;
         pEval->ban_out.buffer[pEval->ban_out.entra].ban = ban_tem;
         pEval->ban_out.buffer[pEval->ban_out.entra].tipo = reactivo_tem;
-        pEval->ban_out.buffer[pEval->ban_out.entra].cantidad = cantidad_tem;
+        pEval->ban_out.buffer[pEval->ban_out.entra].cant_react = cantidad_tem;
         pEval->ban_out.entra = (pEval->ban_out.entra + 1) % pEval->hdr.oe;
         pEval->ban_out.cantidad++;
 
@@ -92,194 +93,29 @@ void *inter_to_salida(void *arg)
     }
 }
 
-// void *inter_to_salida_b(void *arg)
-// {
-//     struct Evaluador *pEval = (struct Evaluador *)arg;
-
-//     for (;;)
-//     {
-//         sem_t *vacios, *llenos, *mutex;
-
-//         vacios = sem_open("BIVB", 0);
-//         llenos = sem_open("BILB", 0);
-//         mutex = sem_open("BIMB", 0);
-
-//         int id_tem;
-//         int ban_tem;
-//         char reactivo_tem;
-//         int cantidad_tem;
-
-//         int ban_reactivos = 0;
-//         sem_wait(llenos);
-//         sem_wait(mutex);
-
-//         id_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].id;
-//         ban_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].ban;
-//         reactivo_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].tipo;
-//         cantidad_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].cantidad;
-
-//         // Como si se hubiera borrado el examen de la cola de entrada
-//         pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].cantidad = 0;
-
-//         pEval->ban_in.bandejas[ban_reactivos].sale = (pEval->ban_in.bandejas[ban_reactivos].sale + 1) % pEval->hdr.q;
-//         pEval->ban_in.bandejas[ban_reactivos].cantidad--;
-
-//         sem_post(mutex);
-//         sem_post(vacios);
-
-//         // Semaforos Bandeja de salida
-//         vacios = sem_open("BSV", 0);
-//         llenos = sem_open("BSL", 0);
-//         mutex = sem_open("BSM", 0);
-
-//         sem_wait(vacios);
-//         sem_wait(mutex);
-
-//         pEval->ban_out.buffer[pEval->ban_out.entra].id = id_tem;
-//         pEval->ban_out.buffer[pEval->ban_out.entra].ban = ban_tem;
-//         pEval->ban_out.buffer[pEval->ban_out.entra].tipo = reactivo_tem;
-//         pEval->ban_out.buffer[pEval->ban_out.entra].cantidad = cantidad_tem;
-//         pEval->ban_out.entra = (pEval->ban_out.entra + 1) % pEval->hdr.oe;
-//         pEval->ban_out.cantidad++;
-
-//         sem_post(mutex);
-//         sem_post(llenos);
-//     }
-// }
-
-// void *inter_to_salida_d(void *arg)
-// {
-//     struct Evaluador *pEval = (struct Evaluador *)arg;
-
-//     for (;;)
-//     {
-//         sem_t *vacios, *llenos, *mutex;
-
-//         vacios = sem_open("BIVD", 0);
-//         llenos = sem_open("BILD", 0);
-//         mutex = sem_open("BIMD", 0);
-
-//         int id_tem;
-//         int ban_tem;
-//         char reactivo_tem;
-//         int cantidad_tem;
-
-//         int ban_reactivos = 0;
-//         sem_wait(llenos);
-//         sem_wait(mutex);
-
-//         id_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].id;
-//         ban_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].ban;
-//         reactivo_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].tipo;
-//         cantidad_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].cantidad;
-
-//         // Como si se hubiera borrado el examen de la cola de entrada
-//         pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].cantidad = 0;
-
-//         pEval->ban_in.bandejas[ban_reactivos].sale = (pEval->ban_in.bandejas[ban_reactivos].sale + 1) % pEval->hdr.q;
-//         pEval->ban_in.bandejas[ban_reactivos].cantidad--;
-
-//         sem_post(mutex);
-//         sem_post(vacios);
-
-//         // Semaforos Bandeja de salida
-//         vacios = sem_open("BSV", 0);
-//         llenos = sem_open("BSL", 0);
-//         mutex = sem_open("BSM", 0);
-
-//         sem_wait(vacios);
-//         sem_wait(mutex);
-
-//         pEval->ban_out.buffer[pEval->ban_out.entra].id = id_tem;
-//         pEval->ban_out.buffer[pEval->ban_out.entra].ban = ban_tem;
-//         pEval->ban_out.buffer[pEval->ban_out.entra].tipo = reactivo_tem;
-//         pEval->ban_out.buffer[pEval->ban_out.entra].cantidad = cantidad_tem;
-//         pEval->ban_out.entra = (pEval->ban_out.entra + 1) % pEval->hdr.oe;
-//         pEval->ban_out.cantidad++;
-
-//         sem_post(mutex);
-//         sem_post(llenos);
-//     }
-// }
-
-// void *inter_to_salida_s(void *arg)
-// {
-//     struct Evaluador *pEval = (struct Evaluador *)arg;
-
-//     for (;;)
-//     {
-//         sem_t *vacios, *llenos, *mutex;
-
-//         vacios = sem_open("BIVS", 0);
-//         llenos = sem_open("BILS", 0);
-//         mutex = sem_open("BIMS", 0);
-
-//         int id_tem;
-//         int ban_tem;
-//         char reactivo_tem;
-//         int cantidad_tem;
-
-//         int ban_reactivos = 0;
-//         sem_wait(llenos);
-//         sem_wait(mutex);
-
-//         id_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].id;
-//         ban_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].ban;
-//         reactivo_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].tipo;
-//         cantidad_tem = pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].cantidad;
-
-//         // Como si se hubiera borrado el examen de la cola de entrada
-//         pEval->ban_in.bandejas[ban_reactivos].buffer[pEval->ban_in.bandejas[ban_reactivos].sale].cantidad = 0;
-
-//         pEval->ban_in.bandejas[ban_reactivos].sale = (pEval->ban_in.bandejas[ban_reactivos].sale + 1) % pEval->hdr.q;
-//         pEval->ban_in.bandejas[ban_reactivos].cantidad--;
-
-//         sem_post(mutex);
-//         sem_post(vacios);
-
-//         // Semaforos Bandeja de salida
-//         vacios = sem_open("BSV", 0);
-//         llenos = sem_open("BSL", 0);
-//         mutex = sem_open("BSM", 0);
-
-//         sem_wait(vacios);
-//         sem_wait(mutex);
-
-//         pEval->ban_out.buffer[pEval->ban_out.entra].id = id_tem;
-//         pEval->ban_out.buffer[pEval->ban_out.entra].ban = ban_tem;
-//         pEval->ban_out.buffer[pEval->ban_out.entra].tipo = reactivo_tem;
-//         pEval->ban_out.buffer[pEval->ban_out.entra].cantidad = cantidad_tem;
-//         pEval->ban_out.entra = (pEval->ban_out.entra + 1) % pEval->hdr.oe;
-//         pEval->ban_out.cantidad++;
-
-//         sem_post(mutex);
-//         sem_post(llenos);
-//     }
-// }
-
 void *from_entr_to_inter(void *arg)
 {
     struct ParamsEntrada *pe = (struct ParamsEntrada *)arg;
     struct Evaluador *pEval = pe->pEval;
     int ban_i = pe->ban_i;
 
-    for (;;)
+    int id_tem;
+    int ban_tem;
+    char reactivo_tem;
+    int cantidad_tem;
+
+    string ban_pos = to_string(ban_i);
+    string be_vacios = "BEV" + ban_pos;
+    string be_llenos = "BEL" + ban_pos;
+    string be_mutex = "BEM" + ban_pos;
+
+    sem_t *vacios, *llenos, *mutex, *mutex_reactivo;
+
+    for (int i = 0; i < 4; i++)
     {
-        string ban_pos = to_string(ban_i);
-        string be_vacios = "BEV" + ban_pos;
-        string be_llenos = "BEL" + ban_pos;
-        string be_mutex = "BEM" + ban_pos;
-
-        sem_t *vacios, *llenos, *mutex, *mutex_reactivo;
-
         vacios = sem_open(be_vacios.c_str(), 0);
         llenos = sem_open(be_llenos.c_str(), 0);
         mutex = sem_open(be_mutex.c_str(), 0);
-
-        int id_tem;
-        int ban_tem;
-        char reactivo_tem;
-        int cantidad_tem;
 
         sem_wait(llenos);
         sem_wait(mutex);
@@ -288,60 +124,64 @@ void *from_entr_to_inter(void *arg)
         ban_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].ban;
         reactivo_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].tipo;
 
-        if (reactivo_tem == 'B')
-        {
-            mutex_reactivo = sem_open("RBM", 0);
-        }
-        else if (reactivo_tem == 'D')
-        {
-            mutex_reactivo = sem_open("RDM", 0);
-        }
-        else if (reactivo_tem == 'S')
-        {
-            mutex_reactivo = sem_open("RSM", 0);
-        }
+        // if (reactivo_tem == 'B')
+        // {
+        //     mutex_reactivo = sem_open("RBM", 0);
+        // }
+        // else if (reactivo_tem == 'D')
+        // {
+        //     mutex_reactivo = sem_open("RDM", 0);
+        // }
+        // else if (reactivo_tem == 'S')
+        // {
+        //     mutex_reactivo = sem_open("RSM", 0);
+        // }
 
-        sem_wait(mutex_reactivo);
-        cantidad_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].cantidad;
+        // sem_wait(mutex_reactivo);
+
+        cantidad_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].cant_react;
+        // cout << "Id Tem = " << id_tem << " "
+        //      << "Tipo React = " << reactivo_tem << " "
+        //      << "Cantidad Tem = " << cantidad_tem << endl;
 
         // Verifica que haya suficiente material del reactivo correspondiente
         // para realizar la muestra, en caso contrario, sale dando senal
         // a todos los semaforos para intentar mas tarde.
-        if (reactivo_tem == 'B')
-        {
-            if (cantidad_tem > pEval->hdr.b)
-            {
-                sem_post(mutex_reactivo);
-                sem_post(mutex);
-                sem_post(vacios);
-                return nullptr;
-            }
-        }
-        else if (reactivo_tem == 'D')
-        {
-            if (cantidad_tem > pEval->hdr.d)
-            {
-                sem_post(mutex_reactivo);
-                sem_post(mutex);
-                sem_post(vacios);
-                return nullptr;
-            }
-        }
-        else if (reactivo_tem == 'S')
-        {
-            if (cantidad_tem > pEval->hdr.s)
-            {
-                sem_post(mutex_reactivo);
-                sem_post(mutex);
-                sem_post(vacios);
-                return nullptr;
-            }
-        }
+        // if (reactivo_tem == 'B')
+        // {
+        //     if (cantidad_tem > pEval->hdr.b)
+        //     {
+        //         sem_post(mutex_reactivo);
+        //         sem_post(mutex);
+        //         sem_post(vacios);
+        //         return nullptr;
+        //     }
+        // }
+        // else if (reactivo_tem == 'D')
+        // {
+        //     if (cantidad_tem > pEval->hdr.d)
+        //     {
+        //         sem_post(mutex_reactivo);
+        //         sem_post(mutex);
+        //         sem_post(vacios);
+        //         return nullptr;
+        //     }
+        // }
+        // else if (reactivo_tem == 'S')
+        // {
+        //     if (cantidad_tem > pEval->hdr.s)
+        //     {
+        //         sem_post(mutex_reactivo);
+        //         sem_post(mutex);
+        //         sem_post(vacios);
+        //         return nullptr;
+        //     }
+        // }
 
-        sem_post(mutex_reactivo);
+        // sem_post(mutex_reactivo);
 
         // Como si se hubiera borrado el examen de la cola de entrada
-        pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].cantidad = 0;
+        pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].cant_react = 0;
         pEval->ban_en.bandejas[ban_i].sale = (pEval->ban_en.bandejas[ban_i].sale + 1) % pEval->hdr.ie;
         pEval->ban_en.bandejas[ban_i].cantidad--;
 
@@ -380,7 +220,7 @@ void *from_entr_to_inter(void *arg)
         pEval->ban_in.bandejas[cola_int].buffer[pEval->ban_in.bandejas[cola_int].entra].id = id_tem;
         pEval->ban_in.bandejas[cola_int].buffer[pEval->ban_in.bandejas[cola_int].entra].ban = ban_tem;
         pEval->ban_in.bandejas[cola_int].buffer[pEval->ban_in.bandejas[cola_int].entra].tipo = reactivo_tem;
-        pEval->ban_in.bandejas[cola_int].buffer[pEval->ban_in.bandejas[cola_int].entra].cantidad = cantidad_tem;
+        pEval->ban_in.bandejas[cola_int].buffer[pEval->ban_in.bandejas[cola_int].entra].cant_react = cantidad_tem;
         pEval->ban_in.bandejas[cola_int].entra = (pEval->ban_in.bandejas[cola_int].entra + 1) % pEval->hdr.q;
         pEval->ban_in.bandejas[cola_int].cantidad++;
 
@@ -442,11 +282,11 @@ void initialize_exams(Evaluador *pEval)
     {
         for (int j = 0; j < pEval->hdr.ie; j++)
         {
-            pEval->ban_en.bandejas[i].buffer[j].id = 0;
-            pEval->ban_en.bandejas[i].buffer[j].ban = 0;
+            pEval->ban_en.bandejas[i].buffer[j].id = -1;
+            pEval->ban_en.bandejas[i].buffer[j].ban = -1;
             pEval->ban_en.bandejas[i].buffer[j].tipo = ' ';
-            pEval->ban_en.bandejas[i].buffer[j].cantidad = 0;
-            pEval->ban_en.bandejas[i].buffer[j].tiempo = 0;
+            pEval->ban_en.bandejas[i].buffer[j].cant_react = 0;
+            pEval->ban_en.bandejas[i].buffer[j].tiempo = -1;
             pEval->ban_en.bandejas[i].buffer[j].informe = ' ';
         }
     }
@@ -456,11 +296,11 @@ void initialize_exams(Evaluador *pEval)
     {
         for (int j = 0; j < pEval->hdr.q; j++)
         {
-            pEval->ban_in.bandejas[i].buffer[j].id = 0;
-            pEval->ban_in.bandejas[i].buffer[j].ban = 0;
+            pEval->ban_in.bandejas[i].buffer[j].id = -1;
+            pEval->ban_in.bandejas[i].buffer[j].ban = -1;
             pEval->ban_in.bandejas[i].buffer[j].tipo = ' ';
-            pEval->ban_in.bandejas[i].buffer[j].cantidad = 0;
-            pEval->ban_in.bandejas[i].buffer[j].tiempo = 0;
+            pEval->ban_in.bandejas[i].buffer[j].cant_react = 0;
+            pEval->ban_in.bandejas[i].buffer[j].tiempo = -1;
             pEval->ban_in.bandejas[i].buffer[j].informe = ' ';
         }
     }
@@ -468,11 +308,11 @@ void initialize_exams(Evaluador *pEval)
     // Exams Bandejas de Salida
     for (int i = 0; i < pEval->hdr.oe; i++)
     {
-        pEval->ban_out.buffer[i].id = 0;
-        pEval->ban_out.buffer[i].ban = 0;
+        pEval->ban_out.buffer[i].id = -1;
+        pEval->ban_out.buffer[i].ban = -1;
         pEval->ban_out.buffer[i].tipo = ' ';
-        pEval->ban_out.buffer[i].cantidad = 0;
-        pEval->ban_out.buffer[i].tiempo = 0;
+        pEval->ban_out.buffer[i].cant_react = 0;
+        pEval->ban_out.buffer[i].tiempo = -1;
         pEval->ban_out.buffer[i].informe = ' ';
     }
 }
@@ -482,33 +322,43 @@ void create_threads(Evaluador *pEval)
     // Hilos Bandejas de Entrada
 
     // pthread_t hilosEntrada[pEval->hdr.i];
-    pthread_t hilosEntrada[LEN_BAN_ENTRA_ENTRY];
-    for (int i = 0; i < pEval->hdr.i; i++)
-    {
-        struct ParamsEntrada pe;
-        pe.ban_i = i;
-        pe.pEval = pEval;
-        pthread_create((hilosEntrada + i), NULL, *from_entr_to_inter, (void *)&pe);
-    }
+    struct ParamsEntrada pe;
+    pe.ban_i = 1;
+    pe.pEval = pEval;
+
+    from_entr_to_inter((void *)&pe);
+    // pthread_t ban1;
+    // pthread_create(&ban1, NULL, *from_entr_to_inter, (void *)&pe);
+
+    // pthread_t hilosEntrada[LEN_BAN_ENTRA_ENTRY];
+    // for (int i = 0; i < pEval->hdr.i; i++)
+    // {
+    //     struct ParamsEntrada pe;
+    //     pe.ban_i = i;
+    //     pe.pEval = pEval;
+    //     pthread_create((hilosEntrada + i), NULL, *from_entr_to_inter, (void *)&pe);
+    // }
 
     // Hijos Bandejas Internas
     pthread_t thread_b, thread_d, thread_s;
-
     struct ParamsInterna pib;
     pib.tipo = 'B';
     pib.pEval = pEval;
-    pthread_create(&thread_b, NULL, *inter_to_salida, (void *)&pib);
+    inter_to_salida((void *) &pib);
+    // pthread_create(&thread_b, NULL, *inter_to_salida, (void *)&pib);
 
-    struct ParamsInterna pid;
-    pid.tipo = 'D';
-    pid.pEval = pEval;
-    pthread_create(&thread_d, NULL, *inter_to_salida, (void *)&pid);
+    // pthread_create(&thread_b, NULL, *inter_to_salida_b, (void *)pEval);
 
-    struct ParamsInterna pis;
-    pis.tipo = 'S';
-    pis.pEval = pEval;
-    pthread_create(&thread_s, NULL, *inter_to_salida, (void *)&pis);
-    cout << "Looking good" << endl;
+    // struct ParamsInterna pid;
+    // pid.tipo = 'D';
+    // pid.pEval = pEval;
+    // pthread_create(&thread_d, NULL, *inter_to_salida, (void *)&pid);
+
+    // struct ParamsInterna pis;
+    // pis.tipo = 'S';
+    // pis.pEval = pEval;
+    // pthread_create(&thread_s, NULL, *inter_to_salida, (void *)&pis);
+    // cout << "Looking good" << endl;
 }
 
 void create_semaphores(Evaluador *pEval)
