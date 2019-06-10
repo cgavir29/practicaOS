@@ -100,21 +100,21 @@ void *inter_to_salida(void *arg)
 
         sem_wait(vacios);
         sem_wait(mutex);
-        int r;
 
-        r = 1 + rand() % (51 - 1);
-
-        if(r >= 0 && r <=15){
+        int r = 1 + rand() % (51 - 1);
+        if (r >= 0 && r <= 15)
+        {
             pEval->ban_out.buffer[pEval->ban_out.entra].informe = '?';
-
-        }else if (r >= 16 && r <=35)
+        }
+        else if (r >= 16 && r <= 35)
         {
             pEval->ban_out.buffer[pEval->ban_out.entra].informe = 'N';
-        }else if (r >= 35 && r <=50)
+        }
+        else if (r >= 35 && r <= 50)
         {
             pEval->ban_out.buffer[pEval->ban_out.entra].informe = 'P';
         }
-        
+
         pEval->ban_out.buffer[pEval->ban_out.entra].id = id_tem;
         pEval->ban_out.buffer[pEval->ban_out.entra].ban = ban_tem;
         pEval->ban_out.buffer[pEval->ban_out.entra].tipo = reactivo_tem;
@@ -197,32 +197,6 @@ void *from_entr_to_inter(void *arg)
         sem_wait(mutex_reactivo);
 
         cantidad_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].cant_react;
-<<<<<<< HEAD
-=======
-        
-       
-
-        if (reactivo_tem == 'B')
-        {
-            tiempo_tem = 1 + rand() % (8 - 1);
-        }
-        else if (reactivo_tem == 'D')
-        {
-
-            tiempo_tem = 5 + rand() % (21 - 5);
-        }
-        else if (reactivo_tem == 'S')
-        {
-            tiempo_tem = 8 + rand() % (26 - 8);
-        }
-        //cout << tiempo_tem << endl;
-
-
-
-        // cout << "Id Tem = " << id_tem << " "
-        //      << "Tipo React = " << reactivo_tem << " "
-        //      << "Cantidad Tem = " << cantidad_tem << endl;
->>>>>>> 4c53dc8e17ea58a3bd15499d66e0d3e109448e5f
 
         // Verifica que haya suficiente material del reactivo correspondiente
         // para realizar la muestra, en caso contrario, espera evitando que entren mas examenes
@@ -238,6 +212,7 @@ void *from_entr_to_inter(void *arg)
                 cantidad_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].cant_react;
             }
             pEval->hdr.b = pEval->hdr.b - cantidad_tem;
+            tiempo_tem = 1 + rand() % (8 - 1);
         }
         else if (reactivo_tem == 'D')
         {
@@ -248,6 +223,7 @@ void *from_entr_to_inter(void *arg)
                 cantidad_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].cant_react;
             }
             pEval->hdr.d = pEval->hdr.d - cantidad_tem;
+            tiempo_tem = 5 + rand() % (21 - 5);
         }
         else if (reactivo_tem == 'S')
         {
@@ -258,6 +234,7 @@ void *from_entr_to_inter(void *arg)
                 cantidad_tem = pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].sale].cant_react;
             }
             pEval->hdr.s = pEval->hdr.s - cantidad_tem;
+            tiempo_tem = 8 + rand() % (26 - 8);
         }
 
         // Como si se hubiera borrado el examen de la cola de entrada
@@ -308,6 +285,8 @@ void *from_entr_to_inter(void *arg)
 
         sem_post(mutex);
         sem_post(llenos);
+
+        sleep(tiempo_tem);
     }
 }
 

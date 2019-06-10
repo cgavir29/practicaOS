@@ -16,7 +16,8 @@
 
 using namespace std;
 
-int handle_reg_exams(int ban_i, char tipo_muestra, int cantidad, Evaluador *pEval)
+// ------------------------------------------------------------------------------------------------
+int handle_reg_exams(int ban_i, char tipo_muestra, int cantidad, Evaluador *pEval, int id_set = -1)
 {
     string ban_pos = to_string(ban_i);
     string be_vacios = "BEV" + ban_pos;
@@ -36,8 +37,15 @@ int handle_reg_exams(int ban_i, char tipo_muestra, int cantidad, Evaluador *pEva
     oss << ban_i << pEval->ban_en.bandejas[ban_i].id_counter;
     istringstream iss(oss.str());
     int id;
-    iss >> id;
-
+    if (id_set != -1)
+    {
+        id = id_set;
+    }
+    else
+    {
+        iss >> id;
+    }
+    
     pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].entra].id = id;
     pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].entra].ban = ban_i;
     pEval->ban_en.bandejas[ban_i].buffer[pEval->ban_en.bandejas[ban_i].entra].tipo = tipo_muestra;
@@ -52,6 +60,7 @@ int handle_reg_exams(int ban_i, char tipo_muestra, int cantidad, Evaluador *pEva
     return id;
 }
 
+// ------------------------------------------------------------------------------------------------
 void handle_reg_files(int start, int end, char *argv[], Evaluador *pEval)
 {
     ifstream infile;
@@ -84,6 +93,7 @@ void handle_reg_files(int start, int end, char *argv[], Evaluador *pEval)
     }
 }
 
+// ------------------------------------------------------------------------------------------------
 void handle_reg(int size, char *argv[])
 {
     string option = argv[2];

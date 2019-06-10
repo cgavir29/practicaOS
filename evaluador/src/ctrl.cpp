@@ -15,6 +15,7 @@
 
 using namespace std;
 
+// ------------------------------------------------------------------------------------------------
 void handle_ctrl_sub_update_opt_s(const string &val, struct Evaluador *pEval)
 {
     int num = string_cast_pos(val);
@@ -25,6 +26,7 @@ void handle_ctrl_sub_update_opt_s(const string &val, struct Evaluador *pEval)
     sem_post(mutex);
 }
 
+// ------------------------------------------------------------------------------------------------
 void handle_ctrl_sub_update_opt_d(const string &val, struct Evaluador *pEval)
 {
     int num = string_cast_pos(val);
@@ -35,6 +37,7 @@ void handle_ctrl_sub_update_opt_d(const string &val, struct Evaluador *pEval)
     sem_post(mutex);
 }
 
+// ------------------------------------------------------------------------------------------------
 void handle_ctrl_sub_update_opt_b(const string &val, struct Evaluador *pEval)
 {
     int num = string_cast_pos(val);
@@ -45,6 +48,7 @@ void handle_ctrl_sub_update_opt_b(const string &val, struct Evaluador *pEval)
     sem_post(mutex);
 }
 
+// ------------------------------------------------------------------------------------------------
 void handle_ctrl_sub_update(const string &sub_command_info, struct Evaluador *pEval)
 {
     string option;
@@ -68,12 +72,9 @@ void handle_ctrl_sub_update(const string &sub_command_info, struct Evaluador *pE
     {
         handle_ctrl_sub_update_opt_s(val, pEval);
     }
-    else
-    {
-        option_not_supported(option);
-    }
 }
 
+// ------------------------------------------------------------------------------------------------
 void handle_ctrl_sub_list_opt_reac(struct Evaluador *pEval)
 {
     cout << "Reactives: " << endl;
@@ -84,6 +85,7 @@ void handle_ctrl_sub_list_opt_reac(struct Evaluador *pEval)
     cout << "]" << endl;
 }
 
+// ------------------------------------------------------------------------------------------------
 void handle_ctrl_sub_list_opt_repo(struct Evaluador *pEval)
 {
     cout << "Reported:" << endl;
@@ -103,6 +105,7 @@ void handle_ctrl_sub_list_opt_repo(struct Evaluador *pEval)
     cout << "]" << endl;
 }
 
+// ------------------------------------------------------------------------------------------------
 void handle_ctrl_sub_list_opt_wait(struct Evaluador *pEval)
 {
     cout << "Waiting:" << endl;
@@ -125,6 +128,7 @@ void handle_ctrl_sub_list_opt_wait(struct Evaluador *pEval)
     cout << "]" << endl;
 }
 
+// ------------------------------------------------------------------------------------------------
 void handle_ctrl_sub_list_opt_proc(struct Evaluador *pEval)
 {
     cout << "Processing:" << endl;
@@ -147,6 +151,7 @@ void handle_ctrl_sub_list_opt_proc(struct Evaluador *pEval)
     cout << "]" << endl;
 }
 
+// ------------------------------------------------------------------------------------------------
 void handle_ctrl_sub_list_opt_all(struct Evaluador *pEval)
 {
     handle_ctrl_sub_list_opt_proc(pEval);
@@ -155,6 +160,7 @@ void handle_ctrl_sub_list_opt_all(struct Evaluador *pEval)
     handle_ctrl_sub_list_opt_reac(pEval);
 }
 
+// ------------------------------------------------------------------------------------------------
 void handle_ctrl_sub_list(const string &option, struct Evaluador *pEval)
 {
     if (option == "processing")
@@ -177,12 +183,9 @@ void handle_ctrl_sub_list(const string &option, struct Evaluador *pEval)
     {
         handle_ctrl_sub_list_opt_all(pEval);
     }
-    else
-    {
-        option_not_supported(option);
-    }
 }
 
+// ------------------------------------------------------------------------------------------------
 void handle_ctrl(char *argv[])
 {
     string option = argv[2];
@@ -229,12 +232,10 @@ void handle_ctrl(char *argv[])
 
         if (sub_command == "list")
         {
-            // check_value(sub_command, sub_command_info);
             handle_ctrl_sub_list(sub_command_info, pEval);
         }
         else if (sub_command == "update")
         {
-            // check_value(sub_command, sub_command_info);
             handle_ctrl_sub_update(sub_command_info, pEval);
         }
 

@@ -11,6 +11,7 @@
 
 using namespace std;
 
+// ------------------------------------------------------------------------------------------------
 void delete_semaphores(Evaluador *pEval)
 {
     // Semaforos Bandejas Entrada
@@ -56,6 +57,7 @@ void delete_semaphores(Evaluador *pEval)
     sem_unlink("RSM");
 }
 
+// ------------------------------------------------------------------------------------------------
 void handle_stop(char *argv[])
 {
     string option = argv[2];

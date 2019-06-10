@@ -5,6 +5,7 @@
 
 using namespace std;
 
+// ------------------------------------------------------------------------------------------------
 int string_cast(const string &val)
 {
     try
@@ -18,6 +19,7 @@ int string_cast(const string &val)
     return -1;
 }
 
+// ------------------------------------------------------------------------------------------------
 int string_cast_pos(const string &val)
 {
     try
