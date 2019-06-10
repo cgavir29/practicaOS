@@ -124,6 +124,7 @@ void handle_rep_opt_i(char *shm_mem, int time)
 
         if ((sem_timedwait(llenos, &tm) == -1))
         {
+            cout << "]";
             exit(0);
         }
         sem_wait(mutex);

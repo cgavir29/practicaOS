@@ -85,6 +85,7 @@ void *inter_to_salida(void *arg)
         cantidad_tem = pEval->ban_in.bandejas[tipo_rct].buffer[pEval->ban_in.bandejas[tipo_rct].sale].cant_react;
         tiempo_tem = pEval->ban_in.bandejas[tipo_rct].buffer[pEval->ban_in.bandejas[tipo_rct].sale].tiempo;
 
+        sleep(tiempo_tem);
         // Como si se hubiera borrado el examen de la cola interna
         pEval->ban_in.bandejas[tipo_rct].buffer[pEval->ban_in.bandejas[tipo_rct].sale].cant_react = 0;
         pEval->ban_in.bandejas[tipo_rct].sale = (pEval->ban_in.bandejas[tipo_rct].sale + 1) % pEval->hdr.q;
@@ -286,7 +287,7 @@ void *from_entr_to_inter(void *arg)
         sem_post(mutex);
         sem_post(llenos);
 
-        sleep(tiempo_tem);
+        
     }
 }
 
