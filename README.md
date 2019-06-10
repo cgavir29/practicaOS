@@ -17,3 +17,4 @@ Solución a la Práctica de Sistemas Operativos 2019-1
 
 ## Consideraciones
 * Los exámenes se demoran el tiempo aleatorio en ser procesados
+* Los exámenes con resulado _?_ conservan su _id_ al entrar de nuevo a ser evaluado
