@@ -34,7 +34,7 @@ int handle_reg_exams(int ban_i, char tipo_muestra, int cantidad, Evaluador *pEva
     sem_wait(mutex);
 
     ostringstream oss;
-    oss << ban_i << pEval->ban_en.bandejas[ban_i].id_counter;
+    oss << pEval->ban_en.bandejas[ban_i].id_counter << ban_i ;
     istringstream iss(oss.str());
     int id;
     if (id_set != -1)
